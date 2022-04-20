@@ -47,6 +47,7 @@ class CustomFormState extends State<CustomForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: TextFormField(
+              autofocus: true,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Input Text',
