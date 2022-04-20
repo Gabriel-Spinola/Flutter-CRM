@@ -13,6 +13,8 @@ class CustomForm extends StatefulWidget {
   }
 }
 
+// NOTE Important: Call dispose of the TextEditingController when you’ve finished using it. This ensures that you discard any resources used by the object.
+
 // Define a corresponding State class
 // this class holds data related to the form
 class CustomFormState extends State<CustomForm> {
@@ -22,6 +24,17 @@ class CustomFormState extends State<CustomForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+
+  // Define a text controller and use it to retrieve the current value
+  // of the TextField
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +49,7 @@ class CustomFormState extends State<CustomForm> {
             child: TextFormField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
+                labelText: 'Input Text',
                 hintText: 'Enter Any Value',
               ),
               // * The validator receives the text that the user has entered.
@@ -46,6 +60,7 @@ class CustomFormState extends State<CustomForm> {
 
                 return null;
               },
+              controller: controller,
             ),
           ),
           Padding(
@@ -56,8 +71,15 @@ class CustomFormState extends State<CustomForm> {
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        // Retrieve the text that the user has entered by using the
+                        // TextEditingController.
+                        content: Text('Received data: ${controller.text}'),
+                      );
+                    },
                   );
                 }
               },
