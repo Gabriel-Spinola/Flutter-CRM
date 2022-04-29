@@ -33,7 +33,7 @@ class DatabaseProvider {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     // Open the database and store the reference.
-    final database = openDatabase(
+    return openDatabase(
       join(documentsDirectory.path, 'doggie_database.db'),
       onCreate: (db, version) {
         // Run the CREATE TABLE statement on the database.
@@ -43,8 +43,6 @@ class DatabaseProvider {
       },
       version: 1,
     );
-
-    return database;
   }
 
   static Future<void> insertObject(IObjectModel object, String table) async {
