@@ -17,11 +17,11 @@ class DatabaseProvider {
     return _instance;
   }
 
-  static Future<Database> get database async {
+  Future<Database> get database async {
     return await _initDatabase();
   }
 
-  static Future<Database> _initDatabase() async {
+  Future<Database> _initDatabase() async {
     if (Platform.isWindows || Platform.isLinux) {
       // Initialize FFI
       sqfliteFfiInit();
@@ -49,7 +49,7 @@ class DatabaseProvider {
 
   static Future<void> insertObject(IObjectModel object, String table) async {
     // Get a reference to the database
-    final db = await DatabaseProvider.database;
+    final db = await _instance.database;
 
     // Insert an Object (Any data, like in this example a dog) into the correct table.
     // You might also specify the `conflictAlgorithm` to use in case the same dog is inserted twice.
@@ -65,7 +65,7 @@ class DatabaseProvider {
   static Future<List<IObjectModel>> retrieveObjects(
       IObjectModel object, String table) async {
     // Get a reference to the database
-    final db = await DatabaseProvider.database;
+    final db = await _instance.database;
 
     final List<Map<String, dynamic>> queryMaps = await db.query(table);
 
@@ -73,7 +73,7 @@ class DatabaseProvider {
   }
 
   static Future<void> updateObject(IObjectModel object, String table) async {
-    final db = await DatabaseProvider.database;
+    final db = await _instance.database;
 
     await db.update(
       table,
@@ -85,7 +85,7 @@ class DatabaseProvider {
   }
 
   static Future<void> deleteObject(int id, String table) async {
-    final db = await DatabaseProvider.database;
+    final db = await _instance.database;
 
     await db.delete(table, where: 'id=?', whereArgs: [id]);
   }
