@@ -89,37 +89,3 @@ class DatabaseProvider {
     db.close();
   }
 }
-
-/*
-  Future<Model> readNote(int id, String table, Field field) async {
-    final db = await instance.database;
-
-    field.func();
-
-    final maps = await db.query(
-      table,
-      columns: field.values,
-      where: '${Field.id} = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isNotEmpty) {
-      return Note.fromMap(maps.first);
-    } else {
-      throw Exception('ID $id not found');
-    }
-  }
-
-  Future<List<Model>> readAllNotes() async {
-    final db = await instance.database;
-
-    // Order by the time in a ascending order
-    final result = await db.query(
-      notesTable,
-      orderBy: '${NoteFields.time} ASC',
-    );
-
-    return result.map((map) => Note.fromMap(map)).toList();
-  }
-  */
-

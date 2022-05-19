@@ -1,31 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Teste1 {
-  final List<String> values = [Teste1.id];
-
-  static const String id = '_id';
-}
-
-class Teste2 extends Teste1 {
-  @override
-  List<String> get values {
-    var l = super.values;
-    l.add('arrombado');
-
-    return l;
-  }
-
-  Teste2() {
-    for (var element in values) {
-      print(element);
-    }
-  }
-}
-
 void main() {
   runApp(const MyApp());
-
-  Teste2();
 }
 
 class MyApp extends StatelessWidget {
