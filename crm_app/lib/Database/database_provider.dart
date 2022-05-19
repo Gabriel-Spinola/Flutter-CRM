@@ -7,6 +7,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../Models/model.dart';
 import '../Models/sale_model.dart';
+import '../Data/dummy.dart';
 
 class DatabaseProvider {
   static final DatabaseProvider instance = DatabaseProvider.init();
@@ -36,6 +37,8 @@ class DatabaseProvider {
 
     final dbPath = join(documentsDirectory.path, filePath);
 
+    insert(dummy, saleTable);
+
     return await openDatabase(
       dbPath,
       onCreate: (Database db, int version) async {
@@ -54,12 +57,12 @@ class DatabaseProvider {
     );
   }
 
-  Future<Model> create(Model note, String table) async {
+  Future<Model> insert(Model model, String table) async {
     final db = await instance.database;
 
     // creates new id if needed
-    final id = await db.insert(table, note.toMap());
-    return note.copy(id: id);
+    final id = await db.insert(table, model.toMap());
+    return model.copy(id: id);
   }
 
   Future<int> update(Model note, String table) async {

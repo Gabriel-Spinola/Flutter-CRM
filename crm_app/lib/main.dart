@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'Models/sale_model.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 

@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'model.dart';
 import '../Database/database_provider.dart';
 
@@ -43,7 +41,7 @@ class SaleModel implements Model {
     id = _id;
   }
 
-  Future<Model> readSale(int id, String table, Field field) async {
+  static Future<Model> readSale(int id, String table, Field field) async {
     final db = await DatabaseProvider.instance.database;
 
     final maps = await db.query(
@@ -60,7 +58,16 @@ class SaleModel implements Model {
     }
   }
 
-  Future<List<Model>> readAllNotes() async {
+  static Model fromMap(Map<String, Object?> map) {
+    return SaleModel(
+      id: map[Field.id] as int?,
+      productName: map[SaleFields.productName] as String,
+      price: map[SaleFields.price] as double,
+      amount: map[SaleFields.amount] as int,
+    );
+  }
+
+  static Future<List<Model>> readAllNotes() async {
     final db = await DatabaseProvider.instance.database;
 
     // Order by the time in a ascending order
@@ -88,16 +95,6 @@ class SaleModel implements Model {
       productName: productName ?? this.productName,
       price: price ?? this.price,
       amount: amount ?? this.amount,
-    );
-  }
-
-  @override
-  Model fromMap(Map<String, Object?> map) {
-    return SaleModel(
-      id: map[Field.id] as int?,
-      productName: map[SaleFields.productName] as String,
-      price: map[SaleFields.price] as double,
-      amount: map[SaleFields.amount] as int,
     );
   }
 }
