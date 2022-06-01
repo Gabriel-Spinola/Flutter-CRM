@@ -89,6 +89,12 @@ class DatabaseProvider {
   Future close() async {
     final db = await instance.database;
 
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+
+    final dbPath = join(documentsDirectory.path, 'tables.db');
+
+    deleteDatabase(dbPath);
+
     db.close();
   }
 }

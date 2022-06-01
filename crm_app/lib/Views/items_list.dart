@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:crm_app/Models/sale_model.dart';
 import 'package:crm_app/Data/dummy.dart';
+import 'package:crm_app/Components/SaleTile.dart';
 
 class ItemsList extends StatefulWidget {
   const ItemsList({Key? key}) : super(key: key);
@@ -35,16 +36,20 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseProvider.instance.insert(
-      const SaleModel(
-        productName: 'car',
-        price: 10.0,
-        amount: 1,
-      ),
-      saleTable,
-    );
+    DatabaseProvider.instance.insert(dummy, saleTable);
 
-    return Text((sales.first as SaleModel).productName);
+    var sale;
+
+    for (Model s in sales) {
+      sale = s;
+    }
+
+    return ListView.builder(
+      itemCount: sales.length,
+      itemBuilder: (context, index) => SaleTile(
+        sale: sales[index] as SaleModel,
+      ),
+    );
   }
 
   @override
