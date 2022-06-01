@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Models/sale_model.dart';
+import 'Views/items_list.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(),
+      body: const ItemsList(),
     );
   }
 }

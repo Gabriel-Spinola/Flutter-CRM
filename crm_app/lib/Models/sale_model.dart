@@ -4,7 +4,7 @@ import '../Database/database_provider.dart';
 const String saleTable = 'sales';
 
 class SaleFields extends Field {
-  @override
+  /*@override
   List<String> get values {
     var l = super.values;
 
@@ -15,7 +15,7 @@ class SaleFields extends Field {
     ]);
 
     return l;
-  }
+  }*/
 
   static const String productName = 'productName';
   static const String price = 'price';
@@ -67,7 +67,7 @@ class SaleModel implements Model {
     );
   }
 
-  static Future<List<Model>> readAllNotes() async {
+  static Future<List<Model>> readAllSales() async {
     final db = await DatabaseProvider.instance.database;
 
     // Order by the time in a ascending order

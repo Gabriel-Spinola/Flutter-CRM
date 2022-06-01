@@ -37,7 +37,7 @@ class DatabaseProvider {
 
     final dbPath = join(documentsDirectory.path, filePath);
 
-    insert(dummy, saleTable);
+    print('database init');
 
     return await openDatabase(
       dbPath,
