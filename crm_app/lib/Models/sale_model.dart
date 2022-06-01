@@ -4,7 +4,7 @@ import '../Database/database_provider.dart';
 const String saleTable = 'sales';
 
 class SaleFields extends Field {
-  /*@override
+  @override
   List<String> get values {
     var l = super.values;
 
@@ -15,7 +15,7 @@ class SaleFields extends Field {
     ]);
 
     return l;
-  }*/
+  }
 
   static const String productName = 'productName';
   static const String price = 'price';
