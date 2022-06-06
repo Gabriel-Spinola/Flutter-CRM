@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import 'model.dart';
 import '../Database/database_provider.dart';
 

@@ -16,23 +16,24 @@ class ItemsList extends StatefulWidget {
 }
 
 class _ItemsListState extends State<ItemsList> {
-  late List<Model> sales;
-  bool isLoading = false;
-  late DatabaseProvider database;
+  late List<Model> _sales;
+  late DatabaseProvider _database;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
 
-    refresh();
+    _refresh();
   }
 
-  Future refresh() async {
-    setState(() => isLoading = true);
+  Future _refresh() async {
+    setState(() => _isLoading = true);
 
-    sales = await SaleModel.readAllSales();
+    _sales = await SaleModel.readAllSales();
 
-    setState(() => isLoading = false);
+    setState(() => _isLoading = false);
   }
 
   AppBar appBar() {
@@ -42,7 +43,8 @@ class _ItemsListState extends State<ItemsList> {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.saleForm);
+            Navigator.of(context)
+                .pushNamed(AppRoutes.saleForm, arguments: _refresh);
           },
         ),
       ],
@@ -51,7 +53,7 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (_isLoading) {
       return Scaffold(
         appBar: appBar(),
         body: const Text(
@@ -61,17 +63,18 @@ class _ItemsListState extends State<ItemsList> {
       );
     }
 
-    database = context.read<DatabaseProvider>();
+    //         context.watch<DatabaseProvider>().anyVariable
+    _database = context.read<DatabaseProvider>();
 
     //database.insert(dummy, saleTable);
 
     return Scaffold(
       appBar: appBar(),
       body: ListView.builder(
-        itemCount: sales.length,
+        itemCount: _sales.length,
         itemBuilder: (context, index) => SaleTile(
-          sale: sales[index] as SaleModel,
-          refresh: refresh,
+          sale: _sales[index] as SaleModel,
+          refresh: _refresh,
         ),
       ),
     );
@@ -79,7 +82,7 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   void dispose() {
-    database.close();
+    _database.close();
 
     super.dispose();
   }

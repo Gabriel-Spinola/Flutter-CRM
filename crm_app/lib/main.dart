@@ -1,6 +1,6 @@
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Routes/app_routes.dart';
-import 'package:crm_app/Routes/sale_form.dart';
+import 'package:crm_app/Views/sale_form.dart';
 import 'package:flutter/material.dart';
 import 'Views/items_list.dart';
 import 'package:provider/provider.dart';
