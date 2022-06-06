@@ -81,6 +81,7 @@ class _SaleFormState extends State<SaleForm> {
           key: _form,
           child: Column(
             children: <Widget>[
+              // * Product Name Field
               TextFormField(
                 initialValue: _formData['product-name'],
                 decoration: const InputDecoration(labelText: 'Nome'),
@@ -93,6 +94,7 @@ class _SaleFormState extends State<SaleForm> {
                 },
                 onSaved: (value) => _formData['product-name'] = value!,
               ),
+              // * Price Field
               TextFormField(
                 initialValue: _formData['price'],
                 decoration: const InputDecoration(labelText: 'Preço'),
@@ -110,6 +112,7 @@ class _SaleFormState extends State<SaleForm> {
                 },
                 onSaved: (value) => _formData['price'] = double.parse(value!),
               ),
+              // * Amount Field
               TextFormField(
                 initialValue: _formData['amount'],
                 decoration: const InputDecoration(labelText: 'Quantidade'),
