@@ -45,9 +45,7 @@ class _ItemsListState extends State<ItemsList> {
       itemCount: sales.length,
       itemBuilder: (context, index) => SaleTile(
         sale: sales[index] as SaleModel,
-        func: () async {
-          await refresh();
-        },
+        refresh: refresh,
       ),
     );
   }

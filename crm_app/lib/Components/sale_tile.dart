@@ -6,11 +6,11 @@ import '../Views/items_list.dart';
 
 class SaleTile extends StatefulWidget {
   final SaleModel sale;
-  final Future Function() func;
+  final Future Function() refresh;
 
   const SaleTile({
     required this.sale,
-    required this.func,
+    required this.refresh,
     Key? key,
   }) : super(key: key);
 
@@ -57,7 +57,7 @@ class _SaleTileState extends State<SaleTile> {
                   setState(() async {
                     ItemsList.shouldRefresh = true;
 
-                    await widget.func();
+                    await widget.refresh();
                   });
                 }
               });
