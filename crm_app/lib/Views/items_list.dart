@@ -3,12 +3,13 @@ import 'package:crm_app/Models/model.dart';
 import 'package:flutter/material.dart';
 import 'package:crm_app/Models/sale_model.dart';
 import 'package:crm_app/Components/sale_tile.dart';
+import 'package:provider/provider.dart';
 
+import '../Data/dummy.dart';
 import '../Routes/app_routes.dart';
 
 class ItemsList extends StatefulWidget {
   const ItemsList({Key? key}) : super(key: key);
-  static bool shouldRefresh = false;
 
   @override
   State<ItemsList> createState() => _ItemsListState();
@@ -17,6 +18,7 @@ class ItemsList extends StatefulWidget {
 class _ItemsListState extends State<ItemsList> {
   late List<Model> sales;
   bool isLoading = false;
+  late DatabaseProvider database;
 
   @override
   void initState() {
@@ -33,26 +35,38 @@ class _ItemsListState extends State<ItemsList> {
     setState(() => isLoading = false);
   }
 
+  AppBar appBar() {
+    return AppBar(
+      title: const Text('User Form'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.saleForm);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Text("Loading", style: TextStyle(fontSize: 25));
+      return Scaffold(
+        appBar: appBar(),
+        body: const Text(
+          "Loading",
+          style: TextStyle(fontSize: 25),
+        ),
+      );
     }
 
-    //DatabaseProvider.instance.insert(dummy, saleTable);
+    database = context.read<DatabaseProvider>();
+
+    //database.insert(dummy, saleTable);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Form'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.saleForm);
-            },
-          ),
-        ],
-      ),
+      appBar: appBar(),
       body: ListView.builder(
         itemCount: sales.length,
         itemBuilder: (context, index) => SaleTile(
@@ -65,7 +79,7 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   void dispose() {
-    DatabaseProvider.instance.close();
+    database.close();
 
     super.dispose();
   }

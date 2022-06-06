@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,7 +10,7 @@ import '../Models/model.dart';
 import '../Models/sale_model.dart';
 import '../Data/dummy.dart';
 
-class DatabaseProvider {
+class DatabaseProvider with ChangeNotifier {
   static final DatabaseProvider instance = DatabaseProvider.init();
 
   static Database? _database;
@@ -37,8 +38,6 @@ class DatabaseProvider {
 
     final dbPath = join(documentsDirectory.path, filePath);
 
-    print('database init');
-
     return await openDatabase(
       dbPath,
       onCreate: (Database db, int version) async {
@@ -60,30 +59,56 @@ class DatabaseProvider {
   Future<Model> insert(Model model, String table) async {
     final db = await instance.database;
 
-    // creates new id if needed
-    final id = await db.insert(table, model.toMap());
-    return model.copy(id: id);
+    try {
+      // creates new id if needed
+      final id = await db.insert(table, model.toMap());
+
+      var newModel = model.copy(id: id);
+
+      notifyListeners();
+
+      return newModel;
+    } catch (e) {
+      throw ErrorDescription("Failed to insert object: ${model.id} (id)");
+    }
   }
 
-  Future<int> update(Model note, String table) async {
+  Future<int> update(Model model, String table) async {
     final db = await instance.database;
 
-    return db.update(
-      table,
-      note.toMap(),
-      where: '${Field.id} = ?',
-      whereArgs: [note.id],
-    );
+    try {
+      int count = await db.update(
+        table,
+        model.toMap(),
+        where: '${Field.id} = ?',
+        whereArgs: [model.id],
+      );
+
+      notifyListeners();
+
+      return count;
+    } catch (e) {
+      throw ErrorDescription("Failed to update object: ${model.id} (id)");
+    }
   }
 
+  /// Returns the number of rows affected
   Future<int> delete(int id, String table) async {
     final db = await instance.database;
 
-    return await db.delete(
-      table,
-      where: '${Field.id} = ?',
-      whereArgs: [id],
-    );
+    try {
+      int rowsAffected = await db.delete(
+        table,
+        where: '${Field.id} = ?',
+        whereArgs: [id],
+      );
+
+      notifyListeners();
+
+      return rowsAffected;
+    } catch (e) {
+      throw ErrorDescription("Failed to delete object: $id (id)");
+    }
   }
 
   Future close() async {
