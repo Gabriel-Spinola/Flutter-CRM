@@ -4,10 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:crm_app/Models/sale_model.dart';
 import 'package:crm_app/Data/dummy.dart';
-import 'package:crm_app/Components/SaleTile.dart';
+import 'package:crm_app/Components/sale_tile.dart';
 
 class ItemsList extends StatefulWidget {
   const ItemsList({Key? key}) : super(key: key);
+  static bool shouldRefresh = false;
 
   @override
   State<ItemsList> createState() => _ItemsListState();
@@ -27,8 +28,6 @@ class _ItemsListState extends State<ItemsList> {
   Future refresh() async {
     setState(() => isLoading = true);
 
-    await DatabaseProvider.instance.insert(dummy, saleTable);
-
     sales = await SaleModel.readAllSales();
 
     setState(() => isLoading = false);
@@ -36,18 +35,19 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseProvider.instance.insert(dummy, saleTable);
-
-    var sale;
-
-    for (Model s in sales) {
-      sale = s;
+    if (isLoading) {
+      return const Text("Loading", style: TextStyle(fontSize: 25));
     }
+
+    //DatabaseProvider.instance.insert(dummy, saleTable);
 
     return ListView.builder(
       itemCount: sales.length,
       itemBuilder: (context, index) => SaleTile(
         sale: sales[index] as SaleModel,
+        func: () async {
+          await refresh();
+        },
       ),
     );
   }

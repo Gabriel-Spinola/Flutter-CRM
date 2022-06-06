@@ -79,6 +79,8 @@ class DatabaseProvider {
   Future<int> delete(int id, String table) async {
     final db = await instance.database;
 
+    print(id);
+
     return await db.delete(
       table,
       where: '${Field.id} = ?',
