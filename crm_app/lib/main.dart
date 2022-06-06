@@ -1,3 +1,5 @@
+import 'package:crm_app/Routes/app_routes.dart';
+import 'package:crm_app/Routes/sale_form.dart';
 import 'package:flutter/material.dart';
 import 'Views/items_list.dart';
 
@@ -6,37 +8,20 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  static const String title = 'Notes SQLite';
+
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: const ItemsList(),
+      title: title,
+      debugShowCheckedModeBanner: false,
+      routes: {
+        AppRoutes.home: (_) => const ItemsList(),
+        AppRoutes.itemsList: (_) => const ItemsList(),
+        AppRoutes.saleForm: (_) => const SaleForm(),
+      },
     );
   }
 }
