@@ -14,7 +14,7 @@ class SaleForm extends StatefulWidget {
 class _SaleFormState extends State<SaleForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
-  bool isEditing = false;
+  bool _isEditing = false;
 
   void _loadFormData(SaleModel sale) {
     _formData['id'] = sale.id;
@@ -33,13 +33,11 @@ class _SaleFormState extends State<SaleForm> {
 
       if (args != null && args['sale'].id != null) {
         _loadFormData(args['sale']);
-        isEditing = true;
+        _isEditing = true;
       }
     } catch (e) {
       _formData['price'] = '';
       _formData['amount'] = '';
-
-      return;
     }
   }
 
@@ -58,7 +56,7 @@ class _SaleFormState extends State<SaleForm> {
                 // Saves the form state, and trigger the onSaved event from the text fields
                 _form.currentState?.save();
 
-                if (isEditing) {
+                if (_isEditing) {
                   context.read<DatabaseProvider>().update(
                         SaleModel(
                           id: _formData['id'],
@@ -73,7 +71,7 @@ class _SaleFormState extends State<SaleForm> {
                   var args = ModalRoute.of(context)?.settings.arguments as Map;
                   await args['refresh']();
 
-                  isEditing = false;
+                  _isEditing = false;
                 } else {
                   context.read<DatabaseProvider>().insert(
                         SaleModel(
