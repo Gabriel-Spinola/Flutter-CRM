@@ -36,6 +36,9 @@ class _SaleFormState extends State<SaleForm> {
         isEditing = true;
       }
     } catch (e) {
+      _formData['price'] = '';
+      _formData['amount'] = '';
+
       return;
     }
   }
@@ -69,6 +72,8 @@ class _SaleFormState extends State<SaleForm> {
 
                   var args = ModalRoute.of(context)?.settings.arguments as Map;
                   await args['refresh']();
+
+                  isEditing = false;
                 } else {
                   context.read<DatabaseProvider>().insert(
                         SaleModel(
@@ -84,8 +89,6 @@ class _SaleFormState extends State<SaleForm> {
                       as Future Function();
                   await refresh();
                 }
-
-                //print(_formData['product-name']);;
 
                 Navigator.of(context).pop();
               }
