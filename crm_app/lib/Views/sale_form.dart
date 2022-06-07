@@ -14,6 +14,7 @@ class SaleForm extends StatefulWidget {
 class _SaleFormState extends State<SaleForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
+  bool isEditing = false;
 
   void _loadFormData(SaleModel sale) {
     _formData['id'] = sale.id;
@@ -28,10 +29,11 @@ class _SaleFormState extends State<SaleForm> {
 
     // if user already exists
     try {
-      var sale = ModalRoute.of(context)?.settings.arguments as SaleModel?;
+      var args = ModalRoute.of(context)?.settings.arguments as Map?;
 
-      if (sale != null && sale.id != null) {
-        _loadFormData(sale);
+      if (args != null && args['sale'].id != null) {
+        _loadFormData(args['sale']);
+        isEditing = true;
       }
     } catch (e) {
       return;
@@ -53,21 +55,37 @@ class _SaleFormState extends State<SaleForm> {
                 // Saves the form state, and trigger the onSaved event from the text fields
                 _form.currentState?.save();
 
-                context.read<DatabaseProvider>().insert(
-                      SaleModel(
-                        productName: _formData['product-name'],
-                        price: _formData['price'],
-                        amount: _formData['amount'],
-                      ),
-                      saleTable,
-                    );
-                //
+                if (isEditing) {
+                  context.read<DatabaseProvider>().update(
+                        SaleModel(
+                          id: _formData['id'],
+                          productName: _formData['product-name'],
+                          price: _formData['price'],
+                          amount: _formData['amount'],
+                        ),
+                        saleTable,
+                      );
+                  //
 
-                //print(_formData['product-name']);
+                  var args = ModalRoute.of(context)?.settings.arguments as Map;
+                  await args['refresh']();
+                } else {
+                  context.read<DatabaseProvider>().insert(
+                        SaleModel(
+                          productName: _formData['product-name'],
+                          price: _formData['price'],
+                          amount: _formData['amount'],
+                        ),
+                        saleTable,
+                      );
+                  //
 
-                var refresh = ModalRoute.of(context)?.settings.arguments
-                    as Future Function();
-                await refresh();
+                  var refresh = ModalRoute.of(context)?.settings.arguments
+                      as Future Function();
+                  await refresh();
+                }
+
+                //print(_formData['product-name']);;
 
                 Navigator.of(context).pop();
               }
@@ -96,7 +114,7 @@ class _SaleFormState extends State<SaleForm> {
               ),
               // * Price Field
               TextFormField(
-                initialValue: _formData['price'],
+                initialValue: _formData['price'].toString(),
                 decoration: const InputDecoration(labelText: 'Preço'),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -114,7 +132,7 @@ class _SaleFormState extends State<SaleForm> {
               ),
               // * Amount Field
               TextFormField(
-                initialValue: _formData['amount'],
+                initialValue: _formData['amount'].toString(),
                 decoration: const InputDecoration(labelText: 'Quantidade'),
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[

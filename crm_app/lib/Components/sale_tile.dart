@@ -1,4 +1,5 @@
 import 'package:crm_app/Models/sale_model.dart';
+import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import '../Database/database_provider.dart';
 import '../Models/sale_model.dart';
@@ -28,9 +29,20 @@ class _SaleTileState extends State<SaleTile> {
         height: 100,
         child: Row(
           children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.edit),
+              color: Colors.orange,
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.saleForm, arguments: {
+                  'sale': widget.sale,
+                  'refresh': widget.refresh
+                });
+              },
+            ),
             // Delete
             IconButton(
               icon: const Icon(Icons.delete),
+              color: Colors.red,
               onPressed: () {
                 showDialog(
                   context: context,
@@ -54,8 +66,10 @@ class _SaleTileState extends State<SaleTile> {
                   ),
                 ).then((isConfirmed) async {
                   if (isConfirmed) {
-                    DatabaseProvider.instance
-                        .delete(widget.sale.id!, saleTable);
+                    DatabaseProvider.instance.delete(
+                      widget.sale.id!,
+                      saleTable,
+                    );
 
                     await widget.refresh();
                   }
