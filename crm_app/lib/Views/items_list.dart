@@ -17,7 +17,6 @@ class ItemsList extends StatefulWidget {
 
 class _ItemsListState extends State<ItemsList> {
   late List<Model> _sales;
-  late DatabaseProvider _database;
 
   bool _isLoading = false;
 
@@ -64,7 +63,6 @@ class _ItemsListState extends State<ItemsList> {
     }
 
     //         context.watch<DatabaseProvider>().anyVariable
-    _database = context.read<DatabaseProvider>();
 
     //database.insert(dummy, saleTable);
 
@@ -78,12 +76,5 @@ class _ItemsListState extends State<ItemsList> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _database.close();
-
-    super.dispose();
   }
 }

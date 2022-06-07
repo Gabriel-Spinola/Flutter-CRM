@@ -114,11 +114,11 @@ class DatabaseProvider with ChangeNotifier {
   Future close() async {
     final db = await instance.database;
 
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    /*Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     final dbPath = join(documentsDirectory.path, 'tables.db');
 
-    deleteDatabase(dbPath);
+    deleteDatabase(dbPath);*/
 
     db.close();
   }
