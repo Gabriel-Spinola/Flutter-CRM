@@ -1,9 +1,9 @@
 import 'model.dart';
 import '../Database/database_provider.dart';
 
-const String saleTable = 'sales';
+const String productTable = 'sales';
 
-class SaleFields extends Field {
+class ProductFields extends Field {
   @override
   List<String> get values {
     var l = super.values;
@@ -22,14 +22,14 @@ class SaleFields extends Field {
   static const String amount = 'amount';
 }
 
-class SaleModel implements Model {
+class ProductModel implements Model {
   @override
   final int? id;
   final String productName;
   final double price;
   final int amount;
 
-  const SaleModel({
+  const ProductModel({
     this.id,
     required this.productName,
     required this.price,
@@ -59,11 +59,11 @@ class SaleModel implements Model {
   }
 
   static Model fromMap(Map<String, Object?> map) {
-    return SaleModel(
+    return ProductModel(
       id: map[Field.id] as int?,
-      productName: map[SaleFields.productName] as String,
-      price: map[SaleFields.price] as double,
-      amount: map[SaleFields.amount] as int,
+      productName: map[ProductFields.productName] as String,
+      price: map[ProductFields.price] as double,
+      amount: map[ProductFields.amount] as int,
     );
   }
 
@@ -72,7 +72,7 @@ class SaleModel implements Model {
 
     // Order by the time in a ascending order
     final result = await db.query(
-      saleTable,
+      productTable,
     );
 
     return result.map((map) => fromMap(map)).toList();
@@ -82,15 +82,15 @@ class SaleModel implements Model {
   Map<String, Object?> toMap() {
     return {
       Field.id: id,
-      SaleFields.productName: productName,
-      SaleFields.price: price,
-      SaleFields.amount: amount,
+      ProductFields.productName: productName,
+      ProductFields.price: price,
+      ProductFields.amount: amount,
     };
   }
 
   @override
   Model copy({int? id, String? productName, double? price, int? amount}) {
-    return SaleModel(
+    return ProductModel(
       id: id ?? this.id,
       productName: productName ?? this.productName,
       price: price ?? this.price,

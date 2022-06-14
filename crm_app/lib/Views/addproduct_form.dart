@@ -1,22 +1,22 @@
 import 'package:crm_app/Database/database_provider.dart';
-import 'package:crm_app/Models/sale_model.dart';
+import 'package:crm_app/Models/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class SaleForm extends StatefulWidget {
-  const SaleForm({Key? key}) : super(key: key);
+class ProductForm extends StatefulWidget {
+  const ProductForm({Key? key}) : super(key: key);
 
   @override
-  State<SaleForm> createState() => _SaleFormState();
+  State<ProductForm> createState() => _ProductFormState();
 }
 
-class _SaleFormState extends State<SaleForm> {
+class _ProductFormState extends State<ProductForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
   bool _isEditing = false;
 
-  void _loadFormData(SaleModel sale) {
+  void _loadFormData(ProductModel sale) {
     _formData['id'] = sale.id;
     _formData['product-name'] = sale.productName;
     _formData['price'] = sale.price;
@@ -58,13 +58,13 @@ class _SaleFormState extends State<SaleForm> {
 
                 if (_isEditing) {
                   context.read<DatabaseProvider>().update(
-                        SaleModel(
+                        ProductModel(
                           id: _formData['id'],
                           productName: _formData['product-name'],
                           price: _formData['price'],
                           amount: _formData['amount'],
                         ),
-                        saleTable,
+                        productTable,
                       );
                   //
 
@@ -74,12 +74,12 @@ class _SaleFormState extends State<SaleForm> {
                   _isEditing = false;
                 } else {
                   context.read<DatabaseProvider>().insert(
-                        SaleModel(
+                        ProductModel(
                           productName: _formData['product-name'],
                           price: _formData['price'],
                           amount: _formData['amount'],
                         ),
-                        saleTable,
+                        productTable,
                       );
                   //
 

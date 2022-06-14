@@ -1,7 +1,8 @@
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:crm_app/Views/home.dart';
-import 'package:crm_app/Views/sale_form.dart';
+import 'package:crm_app/Views/addproduct_form.dart';
+import 'package:crm_app/Views/sale_page.dart';
 import 'package:flutter/material.dart';
 import 'Views/items_list.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
         routes: {
           AppRoutes.home: (_) => const HomePage(),
           AppRoutes.itemsList: (_) => const ItemsList(),
-          AppRoutes.saleForm: (_) => const SaleForm(),
+          AppRoutes.productForm: (_) => const ProductForm(),
+          AppRoutes.salePage: (_) => const SalePage(),
         },
       ),
     );

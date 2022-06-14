@@ -1,12 +1,12 @@
-import 'package:crm_app/Models/sale_model.dart';
+import 'package:crm_app/Models/product_model.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import '../Database/database_provider.dart';
-import '../Models/sale_model.dart';
+import '../Models/product_model.dart';
 import '../Views/items_list.dart';
 
 class SaleTile extends StatefulWidget {
-  final SaleModel sale;
+  final ProductModel sale;
   final Future Function() refresh;
 
   const SaleTile({
@@ -24,6 +24,9 @@ class _SaleTileState extends State<SaleTile> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text("${widget.sale.productName}, ${widget.sale.id}"),
+      subtitle: Text(
+        "Preço: R\$${widget.sale.price}, Quantidade: ${widget.sale.amount}",
+      ),
       trailing: SizedBox(
         width: 100,
         height: 100,
@@ -33,10 +36,11 @@ class _SaleTileState extends State<SaleTile> {
               icon: const Icon(Icons.edit),
               color: Colors.orange,
               onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.saleForm, arguments: {
-                  'sale': widget.sale,
-                  'refresh': widget.refresh
-                });
+                Navigator.of(context).pushNamed(AppRoutes.productForm,
+                    arguments: {
+                      'sale': widget.sale,
+                      'refresh': widget.refresh
+                    });
               },
             ),
             // Delete
@@ -68,7 +72,7 @@ class _SaleTileState extends State<SaleTile> {
                   if (isConfirmed) {
                     DatabaseProvider.instance.delete(
                       widget.sale.id!,
-                      saleTable,
+                      productTable,
                     );
 
                     await widget.refresh();

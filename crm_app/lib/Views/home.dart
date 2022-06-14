@@ -10,12 +10,20 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: TextButton(
-        child: const Text("Lista de items"),
-        onPressed: () {
-          Navigator.of(context).pushNamed(AppRoutes.itemsList);
-        },
-      ),
+      body: ListView(children: <Widget>[
+        TextButton(
+          child: const Text("Lista de items"),
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.itemsList);
+          },
+        ),
+        TextButton(
+          child: const Text("Venda Foda"),
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.salePage);
+          },
+        ),
+      ]),
     );
   }
 }

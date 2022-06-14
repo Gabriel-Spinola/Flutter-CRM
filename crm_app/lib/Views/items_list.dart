@@ -1,8 +1,8 @@
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Models/model.dart';
 import 'package:flutter/material.dart';
-import 'package:crm_app/Models/sale_model.dart';
-import 'package:crm_app/Components/sale_tile.dart';
+import 'package:crm_app/Models/product_model.dart';
+import 'package:crm_app/Components/product_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../Data/dummy.dart';
@@ -30,7 +30,7 @@ class _ItemsListState extends State<ItemsList> {
   Future _refresh() async {
     setState(() => _isLoading = true);
 
-    _sales = await SaleModel.readAllSales();
+    _sales = await ProductModel.readAllSales();
 
     setState(() => _isLoading = false);
   }
@@ -43,7 +43,7 @@ class _ItemsListState extends State<ItemsList> {
           icon: const Icon(Icons.add),
           onPressed: () {
             Navigator.of(context)
-                .pushNamed(AppRoutes.saleForm, arguments: _refresh);
+                .pushNamed(AppRoutes.productForm, arguments: _refresh);
           },
         ),
       ],
@@ -64,14 +64,14 @@ class _ItemsListState extends State<ItemsList> {
 
     //         context.watch<DatabaseProvider>().anyVariable
 
-    //database.insert(dummy, saleTable);
+    //database.insert(dummy, productTable);
 
     return Scaffold(
       appBar: appBar(),
       body: ListView.builder(
         itemCount: _sales.length,
         itemBuilder: (context, index) => SaleTile(
-          sale: _sales[index] as SaleModel,
+          sale: _sales[index] as ProductModel,
           refresh: _refresh,
         ),
       ),

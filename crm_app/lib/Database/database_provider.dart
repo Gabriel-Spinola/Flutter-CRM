@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../Models/model.dart';
-import '../Models/sale_model.dart';
+import '../Models/product_model.dart';
 import '../Data/dummy.dart';
 
 class DatabaseProvider with ChangeNotifier {
@@ -43,11 +43,11 @@ class DatabaseProvider with ChangeNotifier {
       onCreate: (Database db, int version) async {
         await db.execute(
           '''
-          CREATE TABLE $saleTable (
+          CREATE TABLE $productTable (
             ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-            ${SaleFields.productName} TEXT NOT NULL,
-            ${SaleFields.price} FLOAT NOT NULL,
-            ${SaleFields.amount} INTEGER NOT NULL
+            ${ProductFields.productName} TEXT NOT NULL,
+            ${ProductFields.price} FLOAT NOT NULL,
+            ${ProductFields.amount} INTEGER NOT NULL
           )
           ''',
         );
@@ -90,6 +90,12 @@ class DatabaseProvider with ChangeNotifier {
     } catch (e) {
       throw ErrorDescription("Failed to update object: ${model.id} (id)");
     }
+  }
+
+  Future<List<Map<String, Object?>>> rawQuery(String query) async {
+    final db = await instance.database;
+
+    return await db.rawQuery(query);
   }
 
   /// Returns the number of rows affected
