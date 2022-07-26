@@ -78,6 +78,21 @@ class ProductModel implements Model {
     return result.map((map) => fromMap(map)).toList();
   }
 
+  static Future<List<Model>> searchModel(
+      String keyword, String table, String where) async {
+    final db = await DatabaseProvider.instance.database;
+
+    List<Map<String, dynamic>> allRows = await db.query(
+      table,
+      where: where,
+      whereArgs: ['%$keyword%'],
+    );
+
+    List<Model> model = allRows.map((model) => fromMap(model)).toList();
+
+    return model;
+  }
+
   @override
   Map<String, Object?> toMap() {
     return {
