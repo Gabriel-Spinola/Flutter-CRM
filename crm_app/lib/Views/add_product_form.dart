@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class ProductForm extends StatefulWidget {
-  const ProductForm({Key? key}) : super(key: key);
+class AddProductForm extends StatefulWidget {
+  const AddProductForm({Key? key}) : super(key: key);
 
   @override
-  State<ProductForm> createState() => _ProductFormState();
+  State<AddProductForm> createState() => _AddProductFormState();
 }
 
-class _ProductFormState extends State<ProductForm> {
+class _AddProductFormState extends State<AddProductForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
   bool _isEditing = false;
@@ -19,7 +19,8 @@ class _ProductFormState extends State<ProductForm> {
   void _loadFormData(ProductModel sale) {
     _formData['id'] = sale.id;
     _formData['product-name'] = sale.productName;
-    _formData['price'] = sale.price;
+    _formData['costPrice'] = sale.costPrice;
+    _formData['sellingPrice'] = sale.sellingPrice;
     _formData['amount'] = sale.amount;
   }
 
@@ -36,7 +37,8 @@ class _ProductFormState extends State<ProductForm> {
         _isEditing = true;
       }
     } catch (e) {
-      _formData['price'] = '';
+      _formData['costPrice'] = '';
+      _formData['sellingPrice'] = '';
       _formData['amount'] = '';
     }
   }
@@ -61,7 +63,8 @@ class _ProductFormState extends State<ProductForm> {
                         ProductModel(
                           id: _formData['id'],
                           productName: _formData['product-name'],
-                          price: _formData['price'],
+                          costPrice: _formData['costPrice'],
+                          sellingPrice: _formData['sellingPrice'],
                           amount: _formData['amount'],
                         ),
                         productTable,
@@ -76,7 +79,8 @@ class _ProductFormState extends State<ProductForm> {
                   context.read<DatabaseProvider>().insert(
                         ProductModel(
                           productName: _formData['product-name'],
-                          price: _formData['price'],
+                          costPrice: _formData['costPrice'],
+                          sellingPrice: _formData['sellingPrice'],
                           amount: _formData['amount'],
                         ),
                         productTable,
@@ -113,10 +117,10 @@ class _ProductFormState extends State<ProductForm> {
                 },
                 onSaved: (value) => _formData['product-name'] = value!,
               ),
-              // * Price Field
+              // * Cost Price Field
               TextFormField(
-                initialValue: _formData['price'].toString(),
-                decoration: const InputDecoration(labelText: 'Preço'),
+                initialValue: _formData['costPrice'].toString(),
+                decoration: const InputDecoration(labelText: 'Preço de Custo'),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: <TextInputFormatter>[
@@ -129,7 +133,27 @@ class _ProductFormState extends State<ProductForm> {
 
                   return null;
                 },
-                onSaved: (value) => _formData['price'] = double.parse(value!),
+                onSaved: (value) =>
+                    _formData['costPrice'] = double.parse(value!),
+              ),
+              // * Selling Price Field
+              TextFormField(
+                initialValue: _formData['sellingPrice'].toString(),
+                decoration: const InputDecoration(labelText: 'Preço de Venda'),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                ],
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Um Erro ocorreu';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) =>
+                    _formData['sellingPrice'] = double.parse(value!),
               ),
               // * Amount Field
               TextFormField(

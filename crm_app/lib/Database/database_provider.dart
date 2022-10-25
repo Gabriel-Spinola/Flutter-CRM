@@ -20,7 +20,7 @@ class DatabaseProvider with ChangeNotifier {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDatabase('tables.db');
+    _database = await _initDatabase('tables2.db');
 
     return _database!;
   }
@@ -46,7 +46,8 @@ class DatabaseProvider with ChangeNotifier {
           CREATE TABLE $productTable (
             ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
             ${ProductFields.productName} TEXT NOT NULL,
-            ${ProductFields.price} FLOAT NOT NULL,
+            ${ProductFields.costPrice} FLOAT NOT NULL,
+            ${ProductFields.sellingPrice} FLOAT NOT NULL,
             ${ProductFields.amount} INTEGER NOT NULL
           )
           ''',

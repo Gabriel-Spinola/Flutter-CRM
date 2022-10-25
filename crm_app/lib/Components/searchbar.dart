@@ -46,7 +46,11 @@ class _SearchBarState extends State<SearchBar> {
                 "${ProductFields.productName} LIKE ?",
               ),
               builder: (context, snapshot) {
-                if (snapshot.hasError) print('SNAPSHOT ERROR :: SALE PAGE');
+                if (snapshot.hasError) {
+                  print(
+                    'SNAPSHOT ERROR :: SEARCH BAR \n ${snapshot.error.toString()} + ${snapshot.error.runtimeType}',
+                  );
+                }
 
                 if (snapshot.hasData) {
                   var data = snapshot.data as List<ProductModel>;

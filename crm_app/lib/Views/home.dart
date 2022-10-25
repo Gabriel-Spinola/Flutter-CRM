@@ -12,9 +12,9 @@ class HomePage extends StatelessWidget {
       ),
       body: ListView(children: <Widget>[
         TextButton(
-          child: const Text("Lista de items"),
+          child: const Text("Ver Produtos"),
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.itemsList);
+            Navigator.of(context).pushNamed(AppRoutes.productsList);
           },
         ),
         TextButton(

@@ -3,7 +3,7 @@ import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
-import '../Views/items_list.dart';
+import '../Views/products_list_page.dart';
 
 /// The container that display each products on the **Products List Page**
 ///
@@ -27,9 +27,9 @@ class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text("${widget.product.productName}, ${widget.product.id}"),
+      title: Text("${widget.product.productName}, ID: ${widget.product.id}"),
       subtitle: Text(
-        "Preço: R\$${widget.product.price}, Quantidade: ${widget.product.amount}",
+        "Preço de Compra: R\$${widget.product.costPrice}, Preço de Revenda: R\$${widget.product.sellingPrice} Quantidade: ${widget.product.amount}",
       ),
       trailing: SizedBox(
         width: 100,
@@ -40,11 +40,13 @@ class _ProductTileState extends State<ProductTile> {
               icon: const Icon(Icons.edit),
               color: Colors.orange,
               onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.productForm,
-                    arguments: {
-                      'sale': widget.product,
-                      'refresh': widget.refresh
-                    });
+                Navigator.of(context).pushNamed(
+                  AppRoutes.addProductForm,
+                  arguments: {
+                    'sale': widget.product,
+                    'refresh': widget.refresh
+                  },
+                );
               },
             ),
             // Delete

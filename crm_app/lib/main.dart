@@ -1,10 +1,10 @@
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:crm_app/Views/home.dart';
-import 'package:crm_app/Views/addproduct_form.dart';
+import 'package:crm_app/Views/add_product_form.dart';
 import 'package:crm_app/Views/sale_page.dart';
 import 'package:flutter/material.dart';
-import 'Views/items_list.dart';
+import 'Views/products_list_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         routes: {
           AppRoutes.home: (_) => const HomePage(),
-          AppRoutes.itemsList: (_) => const ItemsList(),
-          AppRoutes.productForm: (_) => const ProductForm(),
+          AppRoutes.productsList: (_) => const ProductsList(),
+          AppRoutes.addProductForm: (_) => const AddProductForm(),
           AppRoutes.salePage: (_) => const SalePage(),
         },
       ),

@@ -9,15 +9,15 @@ import 'package:provider/provider.dart';
 import '../Data/dummy.dart';
 import '../Routes/app_routes.dart';
 
-class ItemsList extends StatefulWidget {
-  const ItemsList({Key? key}) : super(key: key);
+class ProductsList extends StatefulWidget {
+  const ProductsList({Key? key}) : super(key: key);
 
   @override
-  State<ItemsList> createState() => _ItemsListState();
+  State<ProductsList> createState() => _ProductsListState();
 }
 
-class _ItemsListState extends State<ItemsList> {
-  late List<ProductModel> _products;
+class _ProductsListState extends State<ProductsList> {
+//  late List<ProductModel> _products;
 
   String keyword = "";
   bool _isLoading = false;
@@ -32,7 +32,7 @@ class _ItemsListState extends State<ItemsList> {
   Future _refresh() async {
     setState(() => _isLoading = true);
 
-    _products = await ProductModel.readAllSales() as List<ProductModel>;
+    //_products = await ProductModel.readAllSales() as List<ProductModel>;
 
     setState(() => _isLoading = false);
   }
@@ -45,7 +45,7 @@ class _ItemsListState extends State<ItemsList> {
           icon: const Icon(Icons.add),
           onPressed: () {
             Navigator.of(context)
-                .pushNamed(AppRoutes.productForm, arguments: _refresh);
+                .pushNamed(AppRoutes.addProductForm, arguments: _refresh);
           },
         ),
       ],
@@ -64,7 +64,7 @@ class _ItemsListState extends State<ItemsList> {
       );
     }
 
-    //         context.watch<DatabaseProvider>().anyVariable
+    //context.watch<DatabaseProvider>().anyVariable
 
     //database.insert(dummy, productTable);
 

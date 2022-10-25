@@ -1,7 +1,7 @@
 import 'model.dart';
 import '../Database/database_provider.dart';
 
-const String productTable = 'sales';
+const String productTable = 'products_tb';
 
 class ProductFields extends Field {
   @override
@@ -10,7 +10,8 @@ class ProductFields extends Field {
 
     l.addAll([
       productName,
-      price,
+      costPrice,
+      sellingPrice,
       amount,
     ]);
 
@@ -18,7 +19,8 @@ class ProductFields extends Field {
   }
 
   static const String productName = 'productName';
-  static const String price = 'price';
+  static const String costPrice = 'costPrice';
+  static const String sellingPrice = 'sellingPrice';
   static const String amount = 'amount';
 }
 
@@ -26,13 +28,15 @@ class ProductModel implements Model {
   @override
   final int? id;
   final String productName;
-  final double price;
+  final double costPrice;
+  final double sellingPrice;
   final int amount;
 
   const ProductModel({
     this.id,
     required this.productName,
-    required this.price,
+    required this.costPrice,
+    required this.sellingPrice,
     required this.amount,
   });
 
@@ -62,7 +66,8 @@ class ProductModel implements Model {
     return ProductModel(
       id: map[Field.id] as int?,
       productName: map[ProductFields.productName] as String,
-      price: map[ProductFields.price] as double,
+      costPrice: map[ProductFields.costPrice] as double,
+      sellingPrice: map[ProductFields.sellingPrice] as double,
       amount: map[ProductFields.amount] as int,
     );
   }
@@ -98,17 +103,25 @@ class ProductModel implements Model {
     return {
       Field.id: id,
       ProductFields.productName: productName,
-      ProductFields.price: price,
+      ProductFields.costPrice: costPrice,
+      ProductFields.sellingPrice: sellingPrice,
       ProductFields.amount: amount,
     };
   }
 
   @override
-  Model copy({int? id, String? productName, double? price, int? amount}) {
+  Model copy({
+    int? id,
+    String? productName,
+    double? costPrice,
+    double? sellingPrice,
+    int? amount,
+  }) {
     return ProductModel(
       id: id ?? this.id,
       productName: productName ?? this.productName,
-      price: price ?? this.price,
+      costPrice: costPrice ?? this.costPrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
       amount: amount ?? this.amount,
     );
   }
