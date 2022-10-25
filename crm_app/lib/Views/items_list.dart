@@ -16,7 +16,7 @@ class ItemsList extends StatefulWidget {
 }
 
 class _ItemsListState extends State<ItemsList> {
-  late List<Model> _sales;
+  late List<ProductModel> _products;
 
   bool _isLoading = false;
 
@@ -30,14 +30,14 @@ class _ItemsListState extends State<ItemsList> {
   Future _refresh() async {
     setState(() => _isLoading = true);
 
-    _sales = await ProductModel.readAllSales();
+    _products = await ProductModel.readAllSales() as List<ProductModel>;
 
     setState(() => _isLoading = false);
   }
 
   AppBar appBar() {
     return AppBar(
-      title: const Text('User Form'),
+      title: const Text('Products List (Items List)'),
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.add),
@@ -69,9 +69,9 @@ class _ItemsListState extends State<ItemsList> {
     return Scaffold(
       appBar: appBar(),
       body: ListView.builder(
-        itemCount: _sales.length,
-        itemBuilder: (context, index) => SaleTile(
-          sale: _sales[index] as ProductModel,
+        itemCount: _products.length,
+        itemBuilder: (context, index) => ProductTile(
+          product: _products[index],
           refresh: _refresh,
         ),
       ),

@@ -5,27 +5,31 @@ import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
 import '../Views/items_list.dart';
 
-class SaleTile extends StatefulWidget {
-  final ProductModel sale;
+/// The container that display each products on the **Products List Page**
+///
+/// [product] is the `ProductModel` you're inserting into the list \
+/// [refresh] is the function to refresh the state and reload all the data
+class ProductTile extends StatefulWidget {
+  final ProductModel product;
   final Future Function() refresh;
 
-  const SaleTile({
-    required this.sale,
+  const ProductTile({
+    required this.product,
     required this.refresh,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<SaleTile> createState() => _SaleTileState();
+  State<ProductTile> createState() => _ProductTileState();
 }
 
-class _SaleTileState extends State<SaleTile> {
+class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text("${widget.sale.productName}, ${widget.sale.id}"),
+      title: Text("${widget.product.productName}, ${widget.product.id}"),
       subtitle: Text(
-        "Preço: R\$${widget.sale.price}, Quantidade: ${widget.sale.amount}",
+        "Preço: R\$${widget.product.price}, Quantidade: ${widget.product.amount}",
       ),
       trailing: SizedBox(
         width: 100,
@@ -38,7 +42,7 @@ class _SaleTileState extends State<SaleTile> {
               onPressed: () {
                 Navigator.of(context).pushNamed(AppRoutes.productForm,
                     arguments: {
-                      'sale': widget.sale,
+                      'sale': widget.product,
                       'refresh': widget.refresh
                     });
               },
@@ -71,7 +75,7 @@ class _SaleTileState extends State<SaleTile> {
                 ).then((isConfirmed) async {
                   if (isConfirmed) {
                     DatabaseProvider.instance.delete(
-                      widget.sale.id!,
+                      widget.product.id!,
                       productTable,
                     );
 
