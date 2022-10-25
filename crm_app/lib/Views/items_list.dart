@@ -1,3 +1,4 @@
+import 'package:crm_app/Components/searchbar.dart';
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Models/model.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ItemsList extends StatefulWidget {
 class _ItemsListState extends State<ItemsList> {
   late List<ProductModel> _products;
 
+  String keyword = "";
   bool _isLoading = false;
 
   @override
@@ -68,13 +70,7 @@ class _ItemsListState extends State<ItemsList> {
 
     return Scaffold(
       appBar: appBar(),
-      body: ListView.builder(
-        itemCount: _products.length,
-        itemBuilder: (context, index) => ProductTile(
-          product: _products[index],
-          refresh: _refresh,
-        ),
-      ),
+      body: SearchBar(refresh: _refresh),
     );
   }
 }
