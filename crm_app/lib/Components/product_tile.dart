@@ -12,10 +12,16 @@ import '../Views/products_list_page.dart';
 class ProductTile extends StatefulWidget {
   final ProductModel product;
   final Future Function() refresh;
+  final Widget? listChildrenWidget;
+  final double sizedBoxWidth;
+  final double sizedBoxHeight;
 
   const ProductTile({
     required this.product,
     required this.refresh,
+    this.listChildrenWidget,
+    this.sizedBoxWidth = 100,
+    this.sizedBoxHeight = 100,
     Key? key,
   }) : super(key: key);
 
@@ -32,8 +38,8 @@ class _ProductTileState extends State<ProductTile> {
         "Preço de Compra: R\$${widget.product.costPrice}, Preço de Revenda: R\$${widget.product.sellingPrice} Quantidade: ${widget.product.amount}",
       ),
       trailing: SizedBox(
-        width: 100,
-        height: 100,
+        width: widget.sizedBoxWidth,
+        height: widget.sizedBoxHeight,
         child: Row(
           children: <Widget>[
             IconButton(
@@ -86,6 +92,9 @@ class _ProductTileState extends State<ProductTile> {
                 });
               },
             ),
+            widget.listChildrenWidget != null
+                ? widget.listChildrenWidget!
+                : Container(),
           ],
         ),
       ),

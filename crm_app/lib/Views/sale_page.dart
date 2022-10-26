@@ -1,4 +1,5 @@
 import 'package:crm_app/Components/product_tile.dart';
+import 'package:crm_app/Components/searchbar.dart';
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
@@ -16,10 +17,13 @@ class SalePage extends StatefulWidget {
 }
 
 class _SalePageState extends State<SalePage> {
-  String keyword = "";
-  bool _isLoading = false;
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
-  Future refresh() async {
+  String _keyword = "";
+  bool _isLoading = false;
+  bool _isVisible = false;
+
+  Future _refresh() async {
     setState(() => _isLoading = true);
     setState(() => _isLoading = false);
   }
@@ -32,32 +36,59 @@ class _SalePageState extends State<SalePage> {
       appBar: AppBar(
         title: const Text('Sale Page'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'keyword',
-                  ),
-                  onChanged: (value) {
-                    keyword = value;
-                    setState(() {});
-                  },
+      body: Column(
+        children: <Widget>[
+          Form(
+            key: _form,
+            child: Column(
+              children: <Widget>[
+                productViewer(),
+                TextFormField(
+                  initialValue: 'product-name',
+                  decoration: const InputDecoration(labelText: 'Nome'),
                 ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget productViewer() {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'keyword',
+                ),
+                onChanged: (value) {
+                  _keyword = value;
+                  _isVisible = true;
+                  setState(() {});
+                },
               ),
-              FutureBuilder(
+            ),
+            Visibility(
+              visible: _isVisible,
+              child: FutureBuilder(
                 future: ProductModel.searchModel(
-                  keyword,
+                  _keyword,
                   productTable,
                   "${ProductFields.productName} LIKE ?",
                 ),
                 builder: (context, snapshot) {
-                  if (snapshot.hasError) print('SNAPSHOT ERROR :: SALE PAGE');
+                  if (snapshot.hasError) {
+                    print(
+                      'SNAPSHOT ERROR :: SEARCH BAR \n ${snapshot.error.toString()} + ${snapshot.error.runtimeType}',
+                    );
+                  }
 
                   if (snapshot.hasData) {
                     var data = snapshot.data as List<ProductModel>;
@@ -66,7 +97,10 @@ class _SalePageState extends State<SalePage> {
                       itemCount: data.length,
                       itemBuilder: (context, index) => ProductTile(
                         product: data[index],
-                        refresh: refresh,
+                        refresh: _refresh,
+                        listChildrenWidget: listChildren(),
+                        sizedBoxWidth: 120,
+                        sizedBoxHeight: 120,
                       ),
                       shrinkWrap: true,
                     );
@@ -74,11 +108,19 @@ class _SalePageState extends State<SalePage> {
                     return const Center(child: Text("Nothing Found"));
                   }
                 },
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget listChildren() {
+    return IconButton(
+      icon: const Icon(Icons.add),
+      color: Colors.green,
+      onPressed: () {},
     );
   }
 }
