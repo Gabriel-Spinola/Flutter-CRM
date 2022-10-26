@@ -9,6 +9,8 @@ import 'package:crm_app/Models/product_model.dart';
 
 import '../Models/model.dart';
 
+/// Sale Page Inspired by Vhsys
+/// TODO: Fix the columns, and create the sale formulary work
 class SalePage extends StatefulWidget {
   const SalePage({Key? key}) : super(key: key);
 
