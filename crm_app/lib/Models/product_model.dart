@@ -113,16 +113,16 @@ class ProductModel implements Model {
   Model copy({
     int? id,
     String? productName,
-    double? costPrice,
-    double? sellingPrice,
-    int? amount,
+    double? totalPrice,
+    double? profit,
+    int? quantitySold,
   }) {
     return ProductModel(
       id: id ?? this.id,
       productName: productName ?? this.productName,
-      costPrice: costPrice ?? this.costPrice,
-      sellingPrice: sellingPrice ?? this.sellingPrice,
-      amount: amount ?? this.amount,
+      costPrice: totalPrice ?? this.costPrice,
+      sellingPrice: profit ?? this.sellingPrice,
+      amount: quantitySold ?? this.amount,
     );
   }
 }

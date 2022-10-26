@@ -8,6 +8,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../Models/model.dart';
 import '../Models/product_model.dart';
+import '../Models/sale_model.dart';
 import '../Data/dummy.dart';
 
 class DatabaseProvider with ChangeNotifier {
@@ -49,6 +50,19 @@ class DatabaseProvider with ChangeNotifier {
             ${ProductFields.costPrice} FLOAT NOT NULL,
             ${ProductFields.sellingPrice} FLOAT NOT NULL,
             ${ProductFields.amount} INTEGER NOT NULL
+          )
+          ''',
+        );
+
+        await db.execute(
+          '''
+          CREATE TABLE $unitSaleTable (
+            ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+            ${UnitSaleFields.productName} TEXT NOT NULL,
+            ${UnitSaleFields.totalPrice} FLOAT NOT NULL,
+            ${UnitSaleFields.profit} FLOAT NOT NULL,
+            ${UnitSaleFields.quantitySold} INTEGER NOT NULL,
+            ${UnitSaleFields.timeCreated} TEXT NOT NULL
           )
           ''',
         );
