@@ -27,10 +27,8 @@ class _SalePageState extends State<SalePage> {
 
   TextEditingController _editingController = TextEditingController();
 
+  Map<String, double> _pricing = {};
   List<SaleModel> _sales = [];
-  int quantity = 1;
-  String oldUpdate = "";
-  String newUpdate = "";
 
   String _keyword = "";
   bool _isLoading = false;
@@ -69,13 +67,15 @@ class _SalePageState extends State<SalePage> {
               children: <Widget>[
                 ListView.builder(
                   itemCount: _sales.length,
-                  itemBuilder: (context, index) => SaleTile(
-                    sale: _sales[index],
-                    refresh: _refresh,
-                    sizedBoxWidth: 120,
-                    sizedBoxHeight: 120,
-                    listChildrenWidget: _quantity(index),
-                  ),
+                  itemBuilder: (context, index) {
+                    return SaleTile(
+                      sale: _sales[index],
+                      refresh: _refresh,
+                      sizedBoxWidth: 120,
+                      sizedBoxHeight: 120,
+                      listChildrenWidget: _quantity(index),
+                    );
+                  },
                   shrinkWrap: true,
                 ),
                 const Gap(20.0),
@@ -116,7 +116,8 @@ class _SalePageState extends State<SalePage> {
                       SaleModel(
                         id: _sales[index].id,
                         productName: _sales[index].productName,
-                        totalPrice: _sales[index].totalPrice * quantity,
+                        totalPrice:
+                            _pricing[_sales[index].productName]! * quantity,
                         profit: _sales[index].profit * quantity,
                         quantitySold: quantity,
                         timeCreated: _sales[index].timeCreated,
@@ -179,12 +180,18 @@ class _SalePageState extends State<SalePage> {
                         onPressed: () {
                           //var quantity = 1;
 
+                          _pricing.addEntries(
+                            <String, double>{
+                              data[index].productName: data[index].sellingPrice,
+                            }.entries,
+                          );
+
                           var newSale = SaleModel(
                             productName: data[index].productName,
                             totalPrice: data[index].sellingPrice,
                             profit: data[index].sellingPrice -
                                 data[index].costPrice,
-                            quantitySold: quantity,
+                            quantitySold: 1,
                             timeCreated: DateTime.now(),
                           );
 
