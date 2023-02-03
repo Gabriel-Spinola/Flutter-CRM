@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:crm_app/Models/product_model.dart';
 
 import '../Models/model.dart';
+import '../Models/sale_model.dart';
 
 /// Sale Page Inspired by Vhsys
 /// TODO: Fix the columns, and create the sale formulary work
@@ -100,7 +101,23 @@ class _SalePageState extends State<SalePage> {
                       itemBuilder: (context, index) => ProductTile(
                         product: data[index],
                         refresh: _refresh,
-                        listChildrenWidget: listChildren(),
+                        listChildrenWidget: IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            print('add');
+
+                            var sale = SaleModel(
+                              productName: data[index].productName,
+                              totalPrice: data[index].sellingPrice,
+                              profit: data[index].sellingPrice -
+                                  data[index].costPrice,
+                              quantitySold: 1,
+                              timeCreated: DateTime.now(),
+                            );
+
+                            print(sale.productName);
+                          },
+                        ),
                         sizedBoxWidth: 120,
                         sizedBoxHeight: 120,
                       ),
@@ -115,14 +132,6 @@ class _SalePageState extends State<SalePage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget listChildren() {
-    return IconButton(
-      icon: const Icon(Icons.add),
-      color: Colors.green,
-      onPressed: () {},
     );
   }
 }
