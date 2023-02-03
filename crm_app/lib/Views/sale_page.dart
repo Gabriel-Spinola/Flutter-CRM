@@ -30,6 +30,8 @@ class _SalePageState extends State<SalePage> {
   Map<String, double> _pricing = {};
   List<SaleModel> _sales = [];
 
+  double _total = 0.0;
+
   String _keyword = "";
   bool _isLoading = false;
   bool _isVisible = false;
@@ -68,6 +70,13 @@ class _SalePageState extends State<SalePage> {
                 ListView.builder(
                   itemCount: _sales.length,
                   itemBuilder: (context, index) {
+                    if (index > 0) {
+                      _total = _sales[index - 1].totalPrice +
+                          _sales[index].totalPrice;
+                    } else {
+                      _total = _sales[index].totalPrice;
+                    }
+
                     return SaleTile(
                       sale: _sales[index],
                       refresh: _refresh,
@@ -78,6 +87,7 @@ class _SalePageState extends State<SalePage> {
                   },
                   shrinkWrap: true,
                 ),
+                Text(_total.toString()),
                 const Gap(20.0),
                 productViewer(),
               ],
