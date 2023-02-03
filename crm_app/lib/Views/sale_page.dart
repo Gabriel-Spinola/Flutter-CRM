@@ -90,7 +90,7 @@ class _SalePageState extends State<SalePage> {
 
   Widget _quantity(int index) {
     return IconButton(
-      icon: const Icon(Icons.numbers),
+      icon: const Icon(Icons.format_list_numbered),
       onPressed: () => showDialog(
         context: context,
         builder: (context) => AlertDialog(
