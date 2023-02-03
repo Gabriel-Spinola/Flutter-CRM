@@ -1,6 +1,8 @@
+import 'package:crm_app/Models/model.dart';
 import 'package:crm_app/Models/product_model.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
 import '../Models/sale_model.dart';
@@ -36,7 +38,7 @@ class _SaleTileState extends State<SaleTile> {
     return ListTile(
       title: Text("${widget.sale.productName}, ID: ${widget.sale.id}"),
       subtitle: Text(
-        "Total: R\$${widget.sale.totalPrice} Quantidade: ${widget.sale.quantitySold}",
+        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}",
       ),
       trailing: SizedBox(
         width: widget.sizedBoxWidth,
