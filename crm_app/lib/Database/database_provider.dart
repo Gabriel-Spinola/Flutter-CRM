@@ -123,26 +123,6 @@ class DatabaseProvider with ChangeNotifier {
     }
   }
 
-  // Gambiarra (:
-  Future<int> updateS(SaleModel model, String table) async {
-    final db = await instance.database;
-
-    try {
-      int count = await db.update(
-        table,
-        model.toMap(),
-        where: '${Field.id} = ?',
-        whereArgs: [model.id],
-      );
-
-      notifyListeners();
-
-      return count;
-    } catch (e) {
-      throw ErrorDescription("Failed to update object: ${model.id} (id)");
-    }
-  }
-
   Future<List<Map<String, Object?>>> rawQuery(String query) async {
     final db = await instance.database;
 
