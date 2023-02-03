@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Multi Provider and Routing
+    // The database provider provides the necessary tools for the database usage
+    // to call the provider methods and properties use: `context.read<Provider>()`.
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DatabaseProvider.instance)

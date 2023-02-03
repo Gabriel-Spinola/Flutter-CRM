@@ -48,6 +48,7 @@ class _ProductTileState extends State<ProductTile> {
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   AppRoutes.addProductForm,
+                  // Argument sent to the 'addProductForm' route
                   arguments: {
                     'sale': widget.product,
                     'refresh': widget.refresh

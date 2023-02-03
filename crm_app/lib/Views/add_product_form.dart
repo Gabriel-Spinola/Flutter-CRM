@@ -28,10 +28,13 @@ class _AddProductFormState extends State<AddProductForm> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // if user already exists
+    // if product already exists
     try {
+      // try to receive arguments sent to this route
       var args = ModalRoute.of(context)?.settings.arguments as Map?;
 
+      // if the route received arguments load the data
+      // and this also means that the user is editing the product
       if (args != null && args['sale'].id != null) {
         _loadFormData(args['sale']);
         _isEditing = true;
@@ -46,134 +49,145 @@ class _AddProductFormState extends State<AddProductForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Form'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () async {
-              final bool? isValid = _form.currentState?.validate();
+      appBar: _appBar(),
+      body: _productForm(),
+    );
+  }
 
-              if (isValid ?? false) {
-                // Saves the form state, and trigger the onSaved event from the text fields
-                _form.currentState?.save();
+  AppBar _appBar() {
+    return AppBar(
+      title: const Text('User Form'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.save),
+          onPressed: () async {
+            final bool? isValid = _form.currentState?.validate();
 
-                if (_isEditing) {
-                  context.read<DatabaseProvider>().update(
-                        ProductModel(
-                          id: _formData['id'],
-                          productName: _formData['product-name'],
-                          costPrice: _formData['costPrice'],
-                          sellingPrice: _formData['sellingPrice'],
-                          amount: _formData['amount'],
-                        ),
-                        productTable,
-                      );
-                  //
+            if (isValid ?? false) {
+              // Saves the form state, and trigger the onSaved event from the text fields
+              _form.currentState?.save();
 
-                  var args = ModalRoute.of(context)?.settings.arguments as Map;
-                  await args['refresh']();
+              // if editing update the data
+              if (_isEditing) {
+                context.read<DatabaseProvider>().update(
+                      ProductModel(
+                        id: _formData['id'],
+                        productName: _formData['product-name'],
+                        costPrice: _formData['costPrice'],
+                        sellingPrice: _formData['sellingPrice'],
+                        amount: _formData['amount'],
+                      ),
+                      productTable,
+                    );
+                //
 
-                  _isEditing = false;
-                } else {
-                  context.read<DatabaseProvider>().insert(
-                        ProductModel(
-                          productName: _formData['product-name'],
-                          costPrice: _formData['costPrice'],
-                          sellingPrice: _formData['sellingPrice'],
-                          amount: _formData['amount'],
-                        ),
-                        productTable,
-                      );
-                  //
+                // Refresh the page
+                var args = ModalRoute.of(context)?.settings.arguments as Map;
+                await args['refresh']();
 
-                  var refresh = ModalRoute.of(context)?.settings.arguments
-                      as Future Function();
-                  await refresh();
+                _isEditing = false;
+              } else {
+                // if adding a new product, insert the data to the database
+                context.read<DatabaseProvider>().insert(
+                      ProductModel(
+                        productName: _formData['product-name'],
+                        costPrice: _formData['costPrice'],
+                        sellingPrice: _formData['sellingPrice'],
+                        amount: _formData['amount'],
+                      ),
+                      productTable,
+                    );
+                //
+
+                // refresh the page
+                var refresh = ModalRoute.of(context)?.settings.arguments
+                    as Future Function();
+                await refresh();
+              }
+
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _productForm() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Form(
+        key: _form,
+        child: Column(
+          children: <Widget>[
+            // * Product Name Field
+            TextFormField(
+              initialValue: _formData['product-name'],
+              decoration: const InputDecoration(labelText: 'Nome'),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Um Erro ocorreu';
                 }
 
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: _form,
-          child: Column(
-            children: <Widget>[
-              // * Product Name Field
-              TextFormField(
-                initialValue: _formData['product-name'],
-                decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Um Erro ocorreu';
-                  }
+                return null;
+              },
+              onSaved: (value) => _formData['product-name'] = value!,
+            ),
+            // * Cost Price Field
+            TextFormField(
+              initialValue: _formData['costPrice'].toString(),
+              decoration: const InputDecoration(labelText: 'Preço de Custo'),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Um Erro ocorreu';
+                }
 
-                  return null;
-                },
-                onSaved: (value) => _formData['product-name'] = value!,
-              ),
-              // * Cost Price Field
-              TextFormField(
-                initialValue: _formData['costPrice'].toString(),
-                decoration: const InputDecoration(labelText: 'Preço de Custo'),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
-                ],
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Um Erro ocorreu';
-                  }
+                return null;
+              },
+              onSaved: (value) => _formData['costPrice'] = double.parse(value!),
+            ),
+            // * Selling Price Field
+            TextFormField(
+              initialValue: _formData['sellingPrice'].toString(),
+              decoration: const InputDecoration(labelText: 'Preço de Venda'),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Um Erro ocorreu';
+                }
 
-                  return null;
-                },
-                onSaved: (value) =>
-                    _formData['costPrice'] = double.parse(value!),
-              ),
-              // * Selling Price Field
-              TextFormField(
-                initialValue: _formData['sellingPrice'].toString(),
-                decoration: const InputDecoration(labelText: 'Preço de Venda'),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
-                ],
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Um Erro ocorreu';
-                  }
+                return null;
+              },
+              onSaved: (value) =>
+                  _formData['sellingPrice'] = double.parse(value!),
+            ),
+            // * Amount Field
+            TextFormField(
+              initialValue: _formData['amount'].toString(),
+              decoration: const InputDecoration(labelText: 'Quantidade'),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              ],
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Um Erro ocorreu';
+                }
 
-                  return null;
-                },
-                onSaved: (value) =>
-                    _formData['sellingPrice'] = double.parse(value!),
-              ),
-              // * Amount Field
-              TextFormField(
-                initialValue: _formData['amount'].toString(),
-                decoration: const InputDecoration(labelText: 'Quantidade'),
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                ],
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Um Erro ocorreu';
-                  }
-
-                  return null;
-                },
-                onSaved: (value) => _formData['amount'] = int.parse(value!),
-              ),
-            ],
-          ),
+                return null;
+              },
+              onSaved: (value) => _formData['amount'] = int.parse(value!),
+            ),
+          ],
         ),
       ),
     );

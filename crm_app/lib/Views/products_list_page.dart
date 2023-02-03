@@ -41,6 +41,7 @@ class _ProductsListState extends State<ProductsList> {
     return AppBar(
       title: const Text('Products List (Items List)'),
       actions: <Widget>[
+        // Add product button
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
