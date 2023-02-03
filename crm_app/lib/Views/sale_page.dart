@@ -178,8 +178,6 @@ class _SalePageState extends State<SalePage> {
                       listChildrenWidget: IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          //var quantity = 1;
-
                           _pricing.addEntries(
                             <String, double>{
                               data[index].productName: data[index].sellingPrice,
