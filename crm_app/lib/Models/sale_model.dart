@@ -111,6 +111,7 @@ class SaleModel implements Model {
       UnitSaleFields.totalPrice: totalPrice,
       UnitSaleFields.profit: profit,
       UnitSaleFields.quantitySold: quantitySold,
+      UnitSaleFields.timeCreated: timeCreated.toString(),
     };
   }
 

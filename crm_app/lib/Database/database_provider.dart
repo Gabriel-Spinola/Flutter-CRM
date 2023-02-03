@@ -21,7 +21,7 @@ class DatabaseProvider with ChangeNotifier {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDatabase('tables2.db');
+    _database = await _initDatabase('tables3.db');
 
     return _database!;
   }
@@ -44,18 +44,6 @@ class DatabaseProvider with ChangeNotifier {
       onCreate: (Database db, int version) async {
         await db.execute(
           '''
-          CREATE TABLE $productTable (
-            ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-            ${ProductFields.productName} TEXT NOT NULL,
-            ${ProductFields.costPrice} FLOAT NOT NULL,
-            ${ProductFields.sellingPrice} FLOAT NOT NULL,
-            ${ProductFields.amount} INTEGER NOT NULL
-          )
-          ''',
-        );
-
-        await db.execute(
-          '''
           CREATE TABLE $unitSaleTable (
             ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
             ${UnitSaleFields.productName} TEXT NOT NULL,
@@ -66,8 +54,35 @@ class DatabaseProvider with ChangeNotifier {
           )
           ''',
         );
+
+        await db.execute(
+          '''
+          CREATE TABLE $productTable (
+            ${Field.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+            ${ProductFields.productName} TEXT NOT NULL,
+            ${ProductFields.costPrice} FLOAT NOT NULL,
+            ${ProductFields.sellingPrice} FLOAT NOT NULL,
+            ${ProductFields.amount} INTEGER NOT NULL
+          )
+          ''',
+        );
       },
-      version: 1,
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        if (oldVersion < newVersion) {
+          await db.execute(
+            """
+            DROP TABLE IF EXISTS $productTable
+            """,
+          );
+
+          await db.execute(
+            """
+            DROP TABLE IF EXISTS $unitSaleTable
+            """,
+          );
+        }
+      },
+      version: 3,
     );
   }
 
@@ -84,7 +99,8 @@ class DatabaseProvider with ChangeNotifier {
 
       return newModel;
     } catch (e) {
-      throw ErrorDescription("Failed to insert object: ${model.id} (id)");
+      throw ErrorDescription(
+          "DATABASE PROVIDER :: Failed to insert object: ${model.id} (id). \n ${e.toString()}");
     }
   }
 
@@ -135,9 +151,10 @@ class DatabaseProvider with ChangeNotifier {
   Future close() async {
     final db = await instance.database;
 
-    /*Directory documentsDirectory = await getApplicationDocumentsDirectory();
+/*
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
-    final dbPath = join(documentsDirectory.path, 'tables.db');
+    final dbPath = join(documentsDirectory.path, 'tables2.db');
 
     deleteDatabase(dbPath);*/
 

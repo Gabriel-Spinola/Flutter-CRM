@@ -1,9 +1,11 @@
 import 'package:crm_app/Components/product_tile.dart';
+import 'package:crm_app/Components/sale_tile.dart';
 import 'package:crm_app/Components/searchbar.dart';
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:crm_app/Models/product_model.dart';
 
@@ -22,12 +24,24 @@ class SalePage extends StatefulWidget {
 class _SalePageState extends State<SalePage> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
+  List<SaleModel> _sales = [];
+
   String _keyword = "";
   bool _isLoading = false;
   bool _isVisible = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    _refresh();
+  }
+
   Future _refresh() async {
     setState(() => _isLoading = true);
+
+    _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
+
     setState(() => _isLoading = false);
   }
 
@@ -45,11 +59,18 @@ class _SalePageState extends State<SalePage> {
             key: _form,
             child: Column(
               children: <Widget>[
-                productViewer(),
-                TextFormField(
-                  initialValue: 'product-name',
-                  decoration: const InputDecoration(labelText: 'Nome'),
+                ListView.builder(
+                  itemCount: _sales.length,
+                  itemBuilder: (context, index) => SaleTile(
+                    sale: _sales[index],
+                    refresh: _refresh,
+                    sizedBoxWidth: 120,
+                    sizedBoxHeight: 120,
+                  ),
+                  shrinkWrap: true,
                 ),
+                Gap(20.0),
+                productViewer(),
               ],
             ),
           )
@@ -115,7 +136,10 @@ class _SalePageState extends State<SalePage> {
                               timeCreated: DateTime.now(),
                             );
 
-                            print(sale.productName);
+                            context
+                                .read<DatabaseProvider>()
+                                .insert(sale, unitSaleTable);
+                            _refresh();
                           },
                         ),
                         sizedBoxWidth: 120,
