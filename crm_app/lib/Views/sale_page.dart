@@ -25,10 +25,12 @@ class _SalePageState extends State<SalePage> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
   List<SaleModel> _sales = [];
+  int quantity = 1;
 
   String _keyword = "";
   bool _isLoading = false;
   bool _isVisible = false;
+  bool isAdding = false;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _SalePageState extends State<SalePage> {
     setState(() => _isLoading = true);
 
     _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
+    isAdding = false;
 
     setState(() => _isLoading = false);
   }
@@ -125,9 +128,9 @@ class _SalePageState extends State<SalePage> {
                         listChildrenWidget: IconButton(
                           icon: const Icon(Icons.add),
                           onPressed: () {
-                            print('add');
+                            //var quantity = 1;
 
-                            var sale = SaleModel(
+                            var newSale = SaleModel(
                               productName: data[index].productName,
                               totalPrice: data[index].sellingPrice,
                               profit: data[index].sellingPrice -
@@ -136,10 +139,43 @@ class _SalePageState extends State<SalePage> {
                               timeCreated: DateTime.now(),
                             );
 
-                            context
-                                .read<DatabaseProvider>()
-                                .insert(sale, unitSaleTable);
-                            _refresh();
+                            for (SaleModel sale in _sales) {
+                              if (sale.productName == newSale.productName) {
+                                quantity++;
+                                SaleModel finalSale = SaleModel(
+                                  id: sale.id,
+                                  productName: newSale.productName,
+                                  totalPrice: newSale.totalPrice * quantity,
+                                  profit: newSale.profit * quantity,
+                                  quantitySold: quantity,
+                                  timeCreated: newSale.timeCreated,
+                                );
+
+                                context.read<DatabaseProvider>().update(
+                                      SaleModel(
+                                        id: finalSale.id,
+                                        productName: finalSale.productName,
+                                        totalPrice: finalSale.totalPrice,
+                                        profit: finalSale.profit,
+                                        quantitySold: finalSale.quantitySold,
+                                        timeCreated: finalSale.timeCreated,
+                                      ),
+                                      unitSaleTable,
+                                    );
+
+                                _refresh();
+                                print(
+                                    'update: ${finalSale.id}, ${finalSale.quantitySold}');
+                                isAdding = true;
+                              }
+                            }
+
+                            if (!isAdding) {
+                              context
+                                  .read<DatabaseProvider>()
+                                  .insert(newSale, unitSaleTable);
+                              _refresh();
+                            }
                           },
                         ),
                         sizedBoxWidth: 120,
