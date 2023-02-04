@@ -3,6 +3,7 @@ import 'package:crm_app/Routes/app_routes.dart';
 import 'package:crm_app/Views/home.dart';
 import 'package:crm_app/Views/add_product_form.dart';
 import 'package:crm_app/Views/sale_page.dart';
+import 'package:crm_app/Views/sales_record.dart';
 import 'package:flutter/material.dart';
 import 'Views/products_list_page.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.productsList: (_) => const ProductsList(),
           AppRoutes.addProductForm: (_) => const AddProductForm(),
           AppRoutes.salePage: (_) => const SalePage(),
+          AppRoutes.saleRecordPage: (_) => const SalesRecord(),
         },
       ),
     );
