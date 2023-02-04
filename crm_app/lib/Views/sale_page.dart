@@ -53,11 +53,11 @@ class _SalePageState extends State<SalePage> {
     isAdding = false;
 
     for (int i = 0; i < _sales.length; i++) {
-      print(i.toString());
       if (i > 0) {
-        _total =
-            _sales.fold(0, (previus, current) => previus + current.totalPrice);
-        print('${_sales[i].productName}, ${_sales[i - 1].productName}');
+        _total = _sales.fold(
+          0,
+          (previous, current) => previous + current.totalPrice,
+        );
       } else {
         _total = _sales[i].totalPrice;
       }
