@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
+import '../Models/sale_model.dart';
 import '../Models/unit_sale_model.dart';
 import '../Views/products_list_page.dart';
 
@@ -12,14 +13,14 @@ import '../Views/products_list_page.dart';
 ///
 /// [sale] is the `ProductModel` you're inserting into the list \
 /// [refresh] is the function to refresh the state and reload all the data
-class SaleTile extends StatefulWidget {
-  final UnitSaleModel sale;
-  final Future Function({bool isNone}) refresh;
+class SaleRecordTile extends StatefulWidget {
+  final SaleModel sale;
+  final Future Function() refresh;
   final Widget? listChildrenWidget;
   final double sizedBoxWidth;
   final double sizedBoxHeight;
 
-  const SaleTile({
+  const SaleRecordTile({
     required this.sale,
     required this.refresh,
     this.listChildrenWidget,
@@ -29,16 +30,16 @@ class SaleTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SaleTile> createState() => _SaleTileState();
+  State<SaleRecordTile> createState() => _SaleRecordTileState();
 }
 
-class _SaleTileState extends State<SaleTile> {
+class _SaleRecordTileState extends State<SaleRecordTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text("${widget.sale.productName}, ID: ${widget.sale.id}"),
       subtitle: Text(
-        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}",
+        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}, Lucro: ${widget.sale.profit}",
       ),
       trailing: SizedBox(
         width: widget.sizedBoxWidth,
@@ -76,10 +77,10 @@ class _SaleTileState extends State<SaleTile> {
                   if (isConfirmed) {
                     DatabaseProvider.instance.delete(
                       widget.sale.id!,
-                      unitSaleTable,
+                      saleTable,
                     );
 
-                    await widget.refresh(isNone: true);
+                    await widget.refresh();
                   }
                 });
               },

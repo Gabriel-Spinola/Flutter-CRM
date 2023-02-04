@@ -2,6 +2,7 @@ import 'package:crm_app/Components/product_tile.dart';
 import 'package:crm_app/Components/sale_tile.dart';
 import 'package:crm_app/Components/searchbar.dart';
 import 'package:crm_app/Database/database_provider.dart';
+import 'package:crm_app/Models/sale_model.dart';
 import 'package:crm_app/Routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:crm_app/Models/product_model.dart';
 
 import '../Models/model.dart';
-import '../Models/sale_model.dart';
+import '../Models/unit_sale_model.dart';
 
 /// Sale Page Inspired by Vhsys
 /// TODO: Fix the columns, and create the sale formulary work
@@ -27,10 +28,11 @@ class _SalePageState extends State<SalePage> {
 
   final TextEditingController _newQuantityController = TextEditingController();
   final TextEditingController _changeController = TextEditingController();
+
   final Map<String, double> _pricing = {};
   final List<ProductModel> _products = [];
 
-  List<SaleModel> _sales = [];
+  List<UnitSaleModel> _unitSales = [];
 
   double _total = 0.0;
 
@@ -48,21 +50,21 @@ class _SalePageState extends State<SalePage> {
   Future _refresh({bool isNone = false}) async {
     setState(() => _isLoading = true);
 
-    _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
+    _unitSales = await UnitSaleModel.readAllUnitSales() as List<UnitSaleModel>;
     isAdding = false;
 
     if (isNone) {
       _total = 0.0;
     }
 
-    for (int i = 0; i < _sales.length; i++) {
+    for (int i = 0; i < _unitSales.length; i++) {
       if (i > 0) {
-        _total = _sales.fold(
+        _total = _unitSales.fold(
           0,
           (previous, current) => previous + current.totalPrice,
         );
       } else {
-        _total = _sales[i].totalPrice;
+        _total = _unitSales[i].totalPrice;
       }
     }
 
@@ -72,8 +74,8 @@ class _SalePageState extends State<SalePage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: Text("Loading..."),
+      return const Scaffold(
+        body: Text("Loading..."),
       );
     }
 
@@ -103,7 +105,11 @@ class _SalePageState extends State<SalePage> {
                   TextButton(
                     child: const Text("Sim"),
                     onPressed: () {
-                      for (var sale in _sales) {
+                      for (var sale in _unitSales) {
+                        context
+                            .read<DatabaseProvider>()
+                            .insert(sale, saleTable);
+
                         context
                             .read<DatabaseProvider>()
                             .delete(sale.id!, unitSaleTable);
@@ -120,6 +126,7 @@ class _SalePageState extends State<SalePage> {
                                 productTable,
                               );
                         }
+
                         _products.clear();
                       }
 
@@ -160,10 +167,10 @@ class _SalePageState extends State<SalePage> {
             child: Column(
               children: <Widget>[
                 ListView.builder(
-                  itemCount: _sales.length,
+                  itemCount: _unitSales.length,
                   itemBuilder: (context, index) {
                     return SaleTile(
-                      sale: _sales[index],
+                      sale: _unitSales[index],
                       refresh: _refresh,
                       sizedBoxWidth: 120,
                       sizedBoxHeight: 120,
@@ -172,7 +179,7 @@ class _SalePageState extends State<SalePage> {
                   },
                   shrinkWrap: true,
                 ),
-                Text(_total.toString()),
+                Text('Valor total: R\$$_total'),
                 const Gap(20.0),
                 productViewer(),
               ],
@@ -208,14 +215,14 @@ class _SalePageState extends State<SalePage> {
                 int quantity = int.parse(_newQuantityController.text);
 
                 context.read<DatabaseProvider>().update(
-                      SaleModel(
-                        id: _sales[index].id,
-                        productName: _sales[index].productName,
+                      UnitSaleModel(
+                        id: _unitSales[index].id,
+                        productName: _unitSales[index].productName,
                         totalPrice:
-                            _pricing[_sales[index].productName]! * quantity,
-                        profit: _sales[index].profit * quantity,
+                            _pricing[_unitSales[index].productName]! * quantity,
+                        profit: _unitSales[index].profit * quantity,
                         quantitySold: quantity,
-                        timeCreated: _sales[index].timeCreated,
+                        timeCreated: _unitSales[index].timeCreated,
                       ),
                       unitSaleTable,
                     );
@@ -280,7 +287,7 @@ class _SalePageState extends State<SalePage> {
                             }.entries,
                           );
 
-                          var newSale = SaleModel(
+                          var newUnitSale = UnitSaleModel(
                             productName: data[index].productName,
                             totalPrice: data[index].sellingPrice,
                             profit: data[index].sellingPrice -
@@ -291,7 +298,7 @@ class _SalePageState extends State<SalePage> {
 
                           context
                               .read<DatabaseProvider>()
-                              .insert(newSale, unitSaleTable);
+                              .insert(newUnitSale, unitSaleTable);
 
                           _products.add(data[index]);
                           _refresh();

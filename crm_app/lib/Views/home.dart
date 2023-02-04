@@ -23,6 +23,12 @@ class HomePage extends StatelessWidget {
             Navigator.of(context).pushNamed(AppRoutes.salePage);
           },
         ),
+        TextButton(
+          child: const Text("Todas venda foda"),
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.saleRecordPage);
+          },
+        ),
       ]),
     );
   }
