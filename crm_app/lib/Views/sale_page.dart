@@ -28,9 +28,9 @@ class _SalePageState extends State<SalePage> {
   final TextEditingController _newQuantityController = TextEditingController();
   final TextEditingController _changeController = TextEditingController();
   final Map<String, double> _pricing = {};
+  final List<ProductModel> _products = [];
 
   List<SaleModel> _sales = [];
-  List<ProductModel> _products = [];
 
   double _total = 0.0;
 
@@ -46,11 +46,15 @@ class _SalePageState extends State<SalePage> {
     _refresh();
   }
 
-  Future _refresh() async {
+  Future _refresh({bool isNone = false}) async {
     setState(() => _isLoading = true);
 
     _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
     isAdding = false;
+
+    if (isNone) {
+      _total = 0.0;
+    }
 
     for (int i = 0; i < _sales.length; i++) {
       if (i > 0) {
@@ -68,7 +72,11 @@ class _SalePageState extends State<SalePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Center();
+    if (_isLoading) {
+      return const Center(
+        child: Text("Loading..."),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
