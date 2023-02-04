@@ -72,8 +72,8 @@ class _SalePageState extends State<SalePage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: Text("Loading..."),
+      return const Scaffold(
+        body: Text("Loading..."),
       );
     }
 
@@ -120,6 +120,7 @@ class _SalePageState extends State<SalePage> {
                                 productTable,
                               );
                         }
+
                         _products.clear();
                       }
 
@@ -172,7 +173,7 @@ class _SalePageState extends State<SalePage> {
                   },
                   shrinkWrap: true,
                 ),
-                Text(_total.toString()),
+                Text('Valor total: R\$$_total'),
                 const Gap(20.0),
                 productViewer(),
               ],
