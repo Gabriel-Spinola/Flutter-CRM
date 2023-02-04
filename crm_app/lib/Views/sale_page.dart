@@ -246,7 +246,6 @@ class _SalePageState extends State<SalePage> {
                 ),
                 onChanged: (value) {
                   _keyword = value;
-                  _isVisible = true;
                   setState(() {});
                 },
               ),
