@@ -30,6 +30,7 @@ class _SalePageState extends State<SalePage> {
   final Map<String, double> _pricing = {};
 
   List<SaleModel> _sales = [];
+  List<ProductModel> _products = [];
 
   double _total = 0.0;
 
@@ -52,8 +53,11 @@ class _SalePageState extends State<SalePage> {
     isAdding = false;
 
     for (int i = 0; i < _sales.length; i++) {
+      print(i.toString());
       if (i > 0) {
-        _total = _sales[i - 1].totalPrice + _sales[i].totalPrice;
+        _total =
+            _sales.fold(0, (previus, current) => previus + current.totalPrice);
+        print('${_sales[i].productName}, ${_sales[i - 1].productName}');
       } else {
         _total = _sales[i].totalPrice;
       }
@@ -96,14 +100,28 @@ class _SalePageState extends State<SalePage> {
                         context
                             .read<DatabaseProvider>()
                             .delete(sale.id!, unitSaleTable);
+
+                        for (var product in _products) {
+                          context.read<DatabaseProvider>().update(
+                                ProductModel(
+                                  id: product.id,
+                                  productName: product.productName,
+                                  costPrice: product.costPrice,
+                                  sellingPrice: product.sellingPrice,
+                                  amount: product.amount - sale.quantitySold,
+                                ),
+                                productTable,
+                              );
+                        }
+                        _products.clear();
                       }
+
+                      double change =
+                          int.parse(_changeController.text) - _total;
 
                       _total = 0.0;
                       _refresh();
                       Navigator.of(context).pop();
-
-                      double change =
-                          int.parse(_changeController.text) - _total;
 
                       showDialog(
                         context: context,
@@ -194,6 +212,7 @@ class _SalePageState extends State<SalePage> {
                       ),
                       unitSaleTable,
                     );
+
                 _refresh();
 
                 Navigator.of(context).pop();
@@ -267,7 +286,8 @@ class _SalePageState extends State<SalePage> {
                           context
                               .read<DatabaseProvider>()
                               .insert(newSale, unitSaleTable);
-                          _updateQuantity(newSale.quantitySold);
+
+                          _products.add(data[index]);
                           _refresh();
                         },
                       ),
