@@ -25,7 +25,7 @@ class SalePage extends StatefulWidget {
 class _SalePageState extends State<SalePage> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
-  TextEditingController _editingController = TextEditingController();
+  final TextEditingController _editingController = TextEditingController();
 
   Map<String, double> _pricing = {};
   List<SaleModel> _sales = [];
@@ -60,6 +60,37 @@ class _SalePageState extends State<SalePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sale Page'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Confirmar"),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("Sim"),
+                    onPressed: () {
+                      for (var sale in _sales) {
+                        context
+                            .read<DatabaseProvider>()
+                            .delete(sale.id!, unitSaleTable);
+                      }
+                      _refresh();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("Não"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -82,7 +113,7 @@ class _SalePageState extends State<SalePage> {
                       refresh: _refresh,
                       sizedBoxWidth: 120,
                       sizedBoxHeight: 120,
-                      listChildrenWidget: _quantity(index),
+                      listChildrenWidget: _updateQuantity(index),
                     );
                   },
                   shrinkWrap: true,
@@ -98,7 +129,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  Widget _quantity(int index) {
+  Widget _updateQuantity(int index) {
     return IconButton(
       icon: const Icon(Icons.format_list_numbered),
       onPressed: () => showDialog(
@@ -135,6 +166,14 @@ class _SalePageState extends State<SalePage> {
                       unitSaleTable,
                     );
                 _refresh();
+
+                if (index > 0) {
+                  _total =
+                      _sales[index - 1].totalPrice + _sales[index].totalPrice;
+                } else {
+                  _total = _sales[index].totalPrice;
+                }
+
                 Navigator.of(context).pop();
               },
             ),
