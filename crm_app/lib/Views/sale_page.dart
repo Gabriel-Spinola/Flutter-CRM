@@ -50,6 +50,14 @@ class _SalePageState extends State<SalePage> {
     _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
     isAdding = false;
 
+    for (int i = 0; i < _sales.length; i++) {
+      if (i > 0) {
+        _total = _sales[i - 1].totalPrice + _sales[i].totalPrice;
+      } else {
+        _total = _sales[i].totalPrice;
+      }
+    }
+
     setState(() => _isLoading = false);
   }
 
@@ -76,6 +84,7 @@ class _SalePageState extends State<SalePage> {
                             .read<DatabaseProvider>()
                             .delete(sale.id!, unitSaleTable);
                       }
+
                       _refresh();
                       Navigator.of(context).pop();
                     },
@@ -101,12 +110,12 @@ class _SalePageState extends State<SalePage> {
                 ListView.builder(
                   itemCount: _sales.length,
                   itemBuilder: (context, index) {
-                    if (index > 0) {
+                    /*if (index > 0) {
                       _total = _sales[index - 1].totalPrice +
                           _sales[index].totalPrice;
                     } else {
                       _total = _sales[index].totalPrice;
-                    }
+                    }*/
 
                     return SaleTile(
                       sale: _sales[index],
@@ -166,13 +175,6 @@ class _SalePageState extends State<SalePage> {
                       unitSaleTable,
                     );
                 _refresh();
-
-                if (index > 0) {
-                  _total =
-                      _sales[index - 1].totalPrice + _sales[index].totalPrice;
-                } else {
-                  _total = _sales[index].totalPrice;
-                }
 
                 Navigator.of(context).pop();
               },
@@ -247,6 +249,7 @@ class _SalePageState extends State<SalePage> {
                           context
                               .read<DatabaseProvider>()
                               .insert(newSale, unitSaleTable);
+                          _updateQuantity(newSale.quantitySold);
                           _refresh();
                         },
                       ),
