@@ -25,10 +25,12 @@ class SalePage extends StatefulWidget {
 class _SalePageState extends State<SalePage> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
-  TextEditingController _editingController = TextEditingController();
+  final TextEditingController _editingController = TextEditingController();
 
   Map<String, double> _pricing = {};
   List<SaleModel> _sales = [];
+
+  double _total = 0.0;
 
   String _keyword = "";
   bool _isLoading = false;
@@ -48,6 +50,14 @@ class _SalePageState extends State<SalePage> {
     _sales = await SaleModel.readAllUnitSales() as List<SaleModel>;
     isAdding = false;
 
+    for (int i = 0; i < _sales.length; i++) {
+      if (i > 0) {
+        _total = _sales[i - 1].totalPrice + _sales[i].totalPrice;
+      } else {
+        _total = _sales[i].totalPrice;
+      }
+    }
+
     setState(() => _isLoading = false);
   }
 
@@ -58,6 +68,38 @@ class _SalePageState extends State<SalePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sale Page'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Confirmar"),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("Sim"),
+                    onPressed: () {
+                      for (var sale in _sales) {
+                        context
+                            .read<DatabaseProvider>()
+                            .delete(sale.id!, unitSaleTable);
+                      }
+
+                      _refresh();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("Não"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -68,16 +110,24 @@ class _SalePageState extends State<SalePage> {
                 ListView.builder(
                   itemCount: _sales.length,
                   itemBuilder: (context, index) {
+                    /*if (index > 0) {
+                      _total = _sales[index - 1].totalPrice +
+                          _sales[index].totalPrice;
+                    } else {
+                      _total = _sales[index].totalPrice;
+                    }*/
+
                     return SaleTile(
                       sale: _sales[index],
                       refresh: _refresh,
                       sizedBoxWidth: 120,
                       sizedBoxHeight: 120,
-                      listChildrenWidget: _quantity(index),
+                      listChildrenWidget: _updateQuantity(index),
                     );
                   },
                   shrinkWrap: true,
                 ),
+                Text(_total.toString()),
                 const Gap(20.0),
                 productViewer(),
               ],
@@ -88,7 +138,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  Widget _quantity(int index) {
+  Widget _updateQuantity(int index) {
     return IconButton(
       icon: const Icon(Icons.format_list_numbered),
       onPressed: () => showDialog(
@@ -125,6 +175,7 @@ class _SalePageState extends State<SalePage> {
                       unitSaleTable,
                     );
                 _refresh();
+
                 Navigator.of(context).pop();
               },
             ),
@@ -196,6 +247,7 @@ class _SalePageState extends State<SalePage> {
                           context
                               .read<DatabaseProvider>()
                               .insert(newSale, unitSaleTable);
+                          _updateQuantity(newSale.quantitySold);
                           _refresh();
                         },
                       ),
