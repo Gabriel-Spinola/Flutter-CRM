@@ -292,6 +292,7 @@ class _SalePageState extends State<SalePage> {
   @override
   void dispose() {
     _newQuantityController.dispose();
+    _changeController.dispose();
 
     super.dispose();
   }
