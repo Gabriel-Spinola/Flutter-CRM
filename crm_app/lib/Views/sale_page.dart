@@ -25,9 +25,10 @@ class SalePage extends StatefulWidget {
 class _SalePageState extends State<SalePage> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
-  final TextEditingController _editingController = TextEditingController();
+  final TextEditingController _newQuantityController = TextEditingController();
+  final TextEditingController _changeController = TextEditingController();
+  final Map<String, double> _pricing = {};
 
-  Map<String, double> _pricing = {};
   List<SaleModel> _sales = [];
 
   double _total = 0.0;
@@ -75,6 +76,18 @@ class _SalePageState extends State<SalePage> {
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text("Confirmar"),
+                content: TextField(
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                  ],
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: "Valor do cliente",
+                  ),
+                  controller: _changeController,
+                ),
                 actions: <Widget>[
                   TextButton(
                     child: const Text("Sim"),
@@ -85,8 +98,22 @@ class _SalePageState extends State<SalePage> {
                             .delete(sale.id!, unitSaleTable);
                       }
 
+                      _total = 0.0;
                       _refresh();
                       Navigator.of(context).pop();
+
+                      double change =
+                          int.parse(_changeController.text) - _total;
+
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text("O troco é $change"),
+                          ),
+                        ),
+                      );
                     },
                   ),
                   TextButton(
@@ -110,13 +137,6 @@ class _SalePageState extends State<SalePage> {
                 ListView.builder(
                   itemCount: _sales.length,
                   itemBuilder: (context, index) {
-                    /*if (index > 0) {
-                      _total = _sales[index - 1].totalPrice +
-                          _sales[index].totalPrice;
-                    } else {
-                      _total = _sales[index].totalPrice;
-                    }*/
-
                     return SaleTile(
                       sale: _sales[index],
                       refresh: _refresh,
@@ -154,13 +174,13 @@ class _SalePageState extends State<SalePage> {
             decoration: const InputDecoration(
               hintText: "Insira a quantidade",
             ),
-            controller: _editingController,
+            controller: _newQuantityController,
           ),
           actions: <Widget>[
             TextButton(
               child: const Text("Submit"),
               onPressed: () {
-                int quantity = int.parse(_editingController.text);
+                int quantity = int.parse(_newQuantityController.text);
 
                 context.read<DatabaseProvider>().update(
                       SaleModel(
@@ -271,7 +291,7 @@ class _SalePageState extends State<SalePage> {
 
   @override
   void dispose() {
-    _editingController.dispose();
+    _newQuantityController.dispose();
 
     super.dispose();
   }
