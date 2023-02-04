@@ -36,7 +36,6 @@ class _SalePageState extends State<SalePage> {
 
   String _keyword = "";
   bool _isLoading = false;
-  bool _isVisible = false;
   bool isAdding = false;
 
   @override
