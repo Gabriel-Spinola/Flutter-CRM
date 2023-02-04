@@ -30,6 +30,7 @@ class _SalePageState extends State<SalePage> {
   final Map<String, double> _pricing = {};
 
   List<SaleModel> _sales = [];
+  List<ProductModel> _products = [];
 
   double _total = 0.0;
 
@@ -98,12 +99,12 @@ class _SalePageState extends State<SalePage> {
                             .delete(sale.id!, unitSaleTable);
                       }
 
+                      double change =
+                          int.parse(_changeController.text) - _total;
+
                       _total = 0.0;
                       _refresh();
                       Navigator.of(context).pop();
-
-                      double change =
-                          int.parse(_changeController.text) - _total;
 
                       showDialog(
                         context: context,
@@ -249,8 +250,6 @@ class _SalePageState extends State<SalePage> {
                       listChildrenWidget: IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          //var quantity = 1;
-
                           _pricing.addEntries(
                             <String, double>{
                               data[index].productName: data[index].sellingPrice,
@@ -269,7 +268,6 @@ class _SalePageState extends State<SalePage> {
                           context
                               .read<DatabaseProvider>()
                               .insert(newSale, unitSaleTable);
-                          _updateQuantity(newSale.quantitySold);
                           _refresh();
                         },
                       ),
