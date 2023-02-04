@@ -14,7 +14,7 @@ import '../Views/products_list_page.dart';
 /// [refresh] is the function to refresh the state and reload all the data
 class SaleTile extends StatefulWidget {
   final SaleModel sale;
-  final Future Function() refresh;
+  final Future Function({bool isNone}) refresh;
   final Widget? listChildrenWidget;
   final double sizedBoxWidth;
   final double sizedBoxHeight;
@@ -59,6 +59,8 @@ class _SaleTileState extends State<SaleTile> {
                       TextButton(
                         child: const Text("Sim"),
                         onPressed: () {
+                          widget.refresh();
+
                           Navigator.of(context).pop(true);
                         },
                       ),
@@ -77,7 +79,7 @@ class _SaleTileState extends State<SaleTile> {
                       unitSaleTable,
                     );
 
-                    await widget.refresh();
+                    await widget.refresh(isNone: true);
                   }
                 });
               },
