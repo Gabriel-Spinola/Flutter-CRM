@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
-import '../Models/sale_model.dart';
+import '../Models/unit_sale_model.dart';
 import '../Views/products_list_page.dart';
 
 /// The container that display each products on the **Products List Page**
@@ -13,7 +13,7 @@ import '../Views/products_list_page.dart';
 /// [sale] is the `ProductModel` you're inserting into the list \
 /// [refresh] is the function to refresh the state and reload all the data
 class SaleTile extends StatefulWidget {
-  final SaleModel sale;
+  final UnitSaleModel sale;
   final Future Function({bool isNone}) refresh;
   final Widget? listChildrenWidget;
   final double sizedBoxWidth;

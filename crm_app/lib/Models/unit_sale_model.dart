@@ -1,9 +1,9 @@
 import 'model.dart';
 import '../Database/database_provider.dart';
 
-const String saleTable = "sales_tb";
+const String unitSaleTable = "unitSales_tb";
 
-class SaleModelFields extends Field {
+class UnitSaleFields extends Field {
   @override
   List<String> get values {
     var l = super.values;
@@ -25,7 +25,7 @@ class SaleModelFields extends Field {
   static const String timeCreated = 'timeCreated';
 }
 
-class SaleModel implements Model {
+class UnitSaleModel implements Model {
   @override
   final int? id;
   final String productName;
@@ -34,7 +34,7 @@ class SaleModel implements Model {
   final int quantitySold;
   final DateTime timeCreated;
 
-  const SaleModel({
+  const UnitSaleModel({
     this.id,
     required this.productName,
     required this.totalPrice,
@@ -65,14 +65,14 @@ class SaleModel implements Model {
     }
   }
 
-  static SaleModel fromMap(Map<String, Object?> map) {
-    return SaleModel(
+  static UnitSaleModel fromMap(Map<String, Object?> map) {
+    return UnitSaleModel(
       id: map[Field.id] as int?,
-      productName: map[SaleModelFields.productName] as String,
-      totalPrice: map[SaleModelFields.totalPrice] as double,
-      profit: map[SaleModelFields.profit] as double,
-      quantitySold: map[SaleModelFields.quantitySold] as int,
-      timeCreated: DateTime.parse(map[SaleModelFields.timeCreated] as String),
+      productName: map[UnitSaleFields.productName] as String,
+      totalPrice: map[UnitSaleFields.totalPrice] as double,
+      profit: map[UnitSaleFields.profit] as double,
+      quantitySold: map[UnitSaleFields.quantitySold] as int,
+      timeCreated: DateTime.parse(map[UnitSaleFields.timeCreated] as String),
     );
   }
 
@@ -80,12 +80,12 @@ class SaleModel implements Model {
     final db = await DatabaseProvider.instance.database;
 
     // Order by the time in a ascending order
-    final result = await db.query(saleTable);
+    final result = await db.query(unitSaleTable);
 
     return result.map((map) => fromMap(map)).toList();
   }
 
-  static Future<List<SaleModel>> searchModel(
+  static Future<List<UnitSaleModel>> searchModel(
     String keyword,
     String table,
     String where,
@@ -98,7 +98,7 @@ class SaleModel implements Model {
       whereArgs: ['%$keyword%'],
     );
 
-    List<SaleModel> model = allRows.map((model) => fromMap(model)).toList();
+    List<UnitSaleModel> model = allRows.map((model) => fromMap(model)).toList();
 
     return model;
   }
@@ -107,11 +107,11 @@ class SaleModel implements Model {
   Map<String, Object?> toMap() {
     return {
       Field.id: id,
-      SaleModelFields.productName: productName,
-      SaleModelFields.totalPrice: totalPrice,
-      SaleModelFields.profit: profit,
-      SaleModelFields.quantitySold: quantitySold,
-      SaleModelFields.timeCreated: timeCreated.toString(),
+      UnitSaleFields.productName: productName,
+      UnitSaleFields.totalPrice: totalPrice,
+      UnitSaleFields.profit: profit,
+      UnitSaleFields.quantitySold: quantitySold,
+      UnitSaleFields.timeCreated: timeCreated.toString(),
     };
   }
 
@@ -124,7 +124,7 @@ class SaleModel implements Model {
     int? quantitySold,
     DateTime? timeCreated,
   }) {
-    return SaleModel(
+    return UnitSaleModel(
       id: id ?? this.id,
       productName: productName ?? this.productName,
       totalPrice: totalPrice ?? this.totalPrice,
