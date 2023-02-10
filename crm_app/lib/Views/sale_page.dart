@@ -103,7 +103,7 @@ class _SalePageState extends State<SalePage> {
           children: <Widget>[
             //productViewer(),
             _productDropDownViewer(),
-            const Gap(20.0),
+            const Gap(25.0),
             Form(
               key: _form,
               child: ListView.builder(

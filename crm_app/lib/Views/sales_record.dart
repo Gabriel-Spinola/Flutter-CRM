@@ -81,7 +81,7 @@ class _SalesRecordState extends State<SalesRecord> {
                 future: SaleModel.searchModel(
                   _keyword,
                   saleTable,
-                  "${SaleModelFields.productName} LIKE ?",
+                  "${SaleModelFields.productName} LIKE ? ORDER BY ${SaleModelFields.timeCreated} DESC",
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
