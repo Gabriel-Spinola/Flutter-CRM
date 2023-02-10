@@ -245,7 +245,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  late ProductModel data;
+  ProductModel? data;
 
   Widget productDropDownViewer() {
     return SizedBox(
@@ -258,123 +258,71 @@ class _SalePageState extends State<SalePage> {
           "${ProductFields.productName} LIKE ?",
         ),
         itemAsString: (ProductModel productModel) => productModel.productName,
-        onChanged: (model) {
-          data = model!;
-        },
+        onChanged: (model) => data = model!,
         dropdownButtonProps: DropdownButtonProps(
           tooltip: "Strings",
           icon: const Icon(
             Icons.add,
             size: 30.0,
           ),
-          onPressed: () {
-            _pricing.addEntries(
-              <String, double>{
-                data.productName: data.sellingPrice,
-              }.entries,
-            );
-
-            var newUnitSale = UnitSaleModel(
-              productName: data.productName,
-              totalPrice: data.sellingPrice,
-              profit: data.sellingPrice - data.costPrice,
-              quantitySold: 1,
-              timeCreated: DateTime.now(),
-            );
-
-            context.read<DatabaseProvider>().insert(newUnitSale, unitSaleTable);
-
-            _products.add(data);
-            _refresh();
-          },
+          onPressed: addSale,
         ),
         dropdownDecoratorProps: const DropDownDecoratorProps(
-          dropdownSearchDecoration: InputDecoration(labelText: "Produtos"),
+          dropdownSearchDecoration:
+              InputDecoration(labelText: "Selecione Um Produto"),
         ),
       ),
     );
   }
 
-  Widget productViewer() {
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'keyword',
-                ),
-                onChanged: (value) {
-                  _keyword = value;
-                  setState(() {});
-                },
-              ),
-            ),
-            FutureBuilder(
-              future: ProductModel.searchModel(
-                _keyword,
-                productTable,
-                "${ProductFields.productName} LIKE ?",
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(
-                    'SNAPSHOT ERROR :: SEARCH BAR \n ${snapshot.error.toString()} + ${snapshot.error.runtimeType}',
-                  );
-                }
+  void addSale() {
+    if (data == null) return;
 
-                if (snapshot.hasData) {
-                  var data = snapshot.data as List<ProductModel>;
+    var quantity = 1;
+    int? id;
 
-                  return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) => ProductTile(
-                      product: data[index],
-                      refresh: _refresh,
-                      listChildrenWidget: IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          _pricing.addEntries(
-                            <String, double>{
-                              data[index].productName: data[index].sellingPrice,
-                            }.entries,
-                          );
+    if (_unitSales.isNotEmpty) {
+      for (var unitSale in _unitSales) {
+        if (data!.productName == unitSale.productName) {
+          quantity = unitSale.quantitySold + 1;
+          id = unitSale.id;
+        }
+      }
+    }
 
-                          var newUnitSale = UnitSaleModel(
-                            productName: data[index].productName,
-                            totalPrice: data[index].sellingPrice,
-                            profit: data[index].sellingPrice -
-                                data[index].costPrice,
-                            quantitySold: 1,
-                            timeCreated: DateTime.now(),
-                          );
-
-                          context
-                              .read<DatabaseProvider>()
-                              .insert(newUnitSale, unitSaleTable);
-
-                          _products.add(data[index]);
-                          _refresh();
-                        },
-                      ),
-                      sizedBoxWidth: 120,
-                      sizedBoxHeight: 120,
-                    ),
-                    shrinkWrap: true,
-                  );
-                } else {
-                  return const Center(child: Text("Nothing Found"));
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+    _pricing.addEntries(
+      <String, double>{
+        data!.productName: data!.sellingPrice,
+      }.entries,
     );
+
+    var newUnitSale = UnitSaleModel(
+      id: id,
+      productName: data!.productName,
+      totalPrice: data!.sellingPrice,
+      profit: data!.sellingPrice - data!.costPrice,
+      quantitySold: quantity,
+      timeCreated: DateTime.now(),
+    );
+
+    if (quantity <= 1) {
+      context.read<DatabaseProvider>().insert(newUnitSale, unitSaleTable);
+    } else {
+      context.read<DatabaseProvider>().update(
+            UnitSaleModel(
+              id: id,
+              productName: newUnitSale.productName,
+              totalPrice: _pricing[newUnitSale.productName]! * quantity,
+              profit: newUnitSale.profit * quantity,
+              quantitySold: quantity,
+              timeCreated: newUnitSale.timeCreated,
+            ),
+            unitSaleTable,
+          );
+    }
+
+    _products.add(data!);
+    _refresh();
   }
 
   @override
