@@ -18,11 +18,13 @@ class SaleTile extends StatefulWidget {
   final Widget? listChildrenWidget;
   final double sizedBoxWidth;
   final double sizedBoxHeight;
+  final double? discount;
 
   const SaleTile({
     required this.sale,
     required this.refresh,
     this.listChildrenWidget,
+    this.discount,
     this.sizedBoxWidth = 100,
     this.sizedBoxHeight = 100,
     Key? key,
@@ -38,7 +40,7 @@ class _SaleTileState extends State<SaleTile> {
     return ListTile(
       title: Text("${widget.sale.productName}, ID: ${widget.sale.id}"),
       subtitle: Text(
-        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}",
+        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}, desconto: ${widget.discount ?? 0}, lucro: ${widget.sale.profit}",
       ),
       trailing: SizedBox(
         width: widget.sizedBoxWidth,

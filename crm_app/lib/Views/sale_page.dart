@@ -34,6 +34,7 @@ class _SalePageState extends State<SalePage> {
 
   final Map<String, double> _pricing = {};
   final List<ProductModel> _products = [];
+  final Map<String, double> _discounts = {};
 
   List<UnitSaleModel> _unitSales = [];
   ProductModel? data;
@@ -56,6 +57,7 @@ class _SalePageState extends State<SalePage> {
 
     _unitSales = await UnitSaleModel.readAllUnitSales() as List<UnitSaleModel>;
     isAdding = false;
+    _discountController.text = "0";
 
     if (isNone) {
       _total = 0.0;
@@ -93,14 +95,14 @@ class _SalePageState extends State<SalePage> {
               style: Styles.headLine2Style.copyWith(color: Colors.white),
             ),
           ),
-          confirmSale(),
+          _confirmSale(),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             //productViewer(),
-            productDropDownViewer(),
+            _productDropDownViewer(),
             const Gap(20.0),
             Form(
               key: _form,
@@ -113,6 +115,9 @@ class _SalePageState extends State<SalePage> {
                     refresh: _refresh,
                     sizedBoxWidth: 120,
                     sizedBoxHeight: 120,
+                    discount: _discounts.isNotEmpty
+                        ? _discounts[_unitSales[index].productName]
+                        : 0,
                     listChildrenWidget:
                         _updateQuantityAndDiscountButtons(index),
                   );
@@ -126,7 +131,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  Widget confirmSale() {
+  Widget _confirmSale() {
     return IconButton(
       icon: const Icon(Icons.save),
       onPressed: () => showDialog(
@@ -204,7 +209,7 @@ class _SalePageState extends State<SalePage> {
     return Row(
       children: [
         IconButton(
-          icon: const Icon(Icons.discount),
+          icon: const Icon(Icons.discount, color: Colors.yellow),
           onPressed: () => showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -225,7 +230,7 @@ class _SalePageState extends State<SalePage> {
                 TextButton(
                   child: const Text("Confirmar"),
                   onPressed: () {
-                    int discount = int.parse(_discountController.text);
+                    double discount = double.parse(_discountController.text);
 
                     context.read<DatabaseProvider>().update(
                           UnitSaleModel(
@@ -240,6 +245,12 @@ class _SalePageState extends State<SalePage> {
                           ),
                           unitSaleTable,
                         );
+
+                    _discounts.addEntries(
+                      <String, double>{
+                        data!.productName: discount,
+                      }.entries,
+                    );
 
                     _refresh();
 
@@ -301,7 +312,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  Widget productDropDownViewer() {
+  Widget _productDropDownViewer() {
     return SizedBox(
       width: AppLayout.getWidth(500.0),
       child: DropdownSearch<ProductModel>(
@@ -322,8 +333,9 @@ class _SalePageState extends State<SalePage> {
           icon: const Icon(
             Icons.add,
             size: 30.0,
+            color: Colors.green,
           ),
-          onPressed: addSale,
+          onPressed: _addSale,
         ),
         dropdownDecoratorProps: const DropDownDecoratorProps(
           dropdownSearchDecoration:
@@ -333,7 +345,7 @@ class _SalePageState extends State<SalePage> {
     );
   }
 
-  void addSale() {
+  void _addSale() {
     if (data == null) return;
 
     int quantity = 1;
