@@ -4,15 +4,17 @@ import 'package:crm_app/Components/searchbar.dart';
 import 'package:crm_app/Database/database_provider.dart';
 import 'package:crm_app/Models/sale_model.dart';
 import 'package:crm_app/Routes/app_routes.dart';
+import 'package:crm_app/Utils/app_layout.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:crm_app/Models/product_model.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
-import '../Models/model.dart';
 import '../Models/unit_sale_model.dart';
+import '../Utils/app_style.dart';
 
 /// Sale Page Inspired by Vhsys
 /// TODO: Fix the columns, and create the sale formulary work
@@ -83,6 +85,12 @@ class _SalePageState extends State<SalePage> {
       appBar: AppBar(
         title: const Text('Sale Page'),
         actions: <Widget>[
+          Center(
+            child: Text(
+              'Valor total: R\$$_total',
+              style: Styles.headLine2Style.copyWith(color: Colors.white),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () => showDialog(
@@ -160,32 +168,31 @@ class _SalePageState extends State<SalePage> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Form(
-            key: _form,
-            child: Column(
-              children: <Widget>[
-                ListView.builder(
-                  itemCount: _unitSales.length,
-                  itemBuilder: (context, index) {
-                    return SaleTile(
-                      sale: _unitSales[index],
-                      refresh: _refresh,
-                      sizedBoxWidth: 120,
-                      sizedBoxHeight: 120,
-                      listChildrenWidget: _updateQuantity(index),
-                    );
-                  },
-                  shrinkWrap: true,
-                ),
-                Text('Valor total: R\$$_total'),
-                const Gap(20.0),
-                productViewer(),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            //productViewer(),
+            productDropDownViewer(),
+            const Gap(20.0),
+            Form(
+              key: _form,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: _unitSales.length,
+                itemBuilder: (context, index) {
+                  return SaleTile(
+                    sale: _unitSales[index],
+                    refresh: _refresh,
+                    sizedBoxWidth: 120,
+                    sizedBoxHeight: 120,
+                    listChildrenWidget: _updateQuantity(index),
+                  );
+                },
+                shrinkWrap: true,
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -233,6 +240,56 @@ class _SalePageState extends State<SalePage> {
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  late ProductModel data;
+
+  Widget productDropDownViewer() {
+    return SizedBox(
+      width: AppLayout.getWidth(500.0),
+      child: DropdownSearch<ProductModel>(
+        popupProps: const PopupProps.menu(showSearchBox: true),
+        asyncItems: (String filter) => ProductModel.searchModel(
+          filter,
+          productTable,
+          "${ProductFields.productName} LIKE ?",
+        ),
+        itemAsString: (ProductModel productModel) => productModel.productName,
+        onChanged: (model) {
+          data = model!;
+        },
+        dropdownButtonProps: DropdownButtonProps(
+          tooltip: "Strings",
+          icon: const Icon(
+            Icons.add,
+            size: 30.0,
+          ),
+          onPressed: () {
+            _pricing.addEntries(
+              <String, double>{
+                data.productName: data.sellingPrice,
+              }.entries,
+            );
+
+            var newUnitSale = UnitSaleModel(
+              productName: data.productName,
+              totalPrice: data.sellingPrice,
+              profit: data.sellingPrice - data.costPrice,
+              quantitySold: 1,
+              timeCreated: DateTime.now(),
+            );
+
+            context.read<DatabaseProvider>().insert(newUnitSale, unitSaleTable);
+
+            _products.add(data);
+            _refresh();
+          },
+        ),
+        dropdownDecoratorProps: const DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(labelText: "Produtos"),
         ),
       ),
     );
