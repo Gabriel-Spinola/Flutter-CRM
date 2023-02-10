@@ -39,7 +39,7 @@ class _SaleRecordTileState extends State<SaleRecordTile> {
     return ListTile(
       title: Text("${widget.sale.productName}, ID: ${widget.sale.id}"),
       subtitle: Text(
-        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}, Lucro: ${widget.sale.profit}",
+        "Total: R\$${widget.sale.totalPrice}, Quantidade: ${widget.sale.quantitySold}, Lucro: ${widget.sale.profit}, data: ${widget.sale.timeCreated}",
       ),
       trailing: SizedBox(
         width: widget.sizedBoxWidth,

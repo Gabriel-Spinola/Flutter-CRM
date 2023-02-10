@@ -278,7 +278,7 @@ class _SalePageState extends State<SalePage> {
   void addSale() {
     if (data == null) return;
 
-    var quantity = 1;
+    int quantity = 1;
     int? id;
 
     if (_unitSales.isNotEmpty) {
