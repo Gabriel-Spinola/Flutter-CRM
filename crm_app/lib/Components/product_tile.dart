@@ -1,6 +1,8 @@
 import 'package:crm_app/Models/product_model.dart';
 import 'package:crm_app/Routes/app_routes.dart';
+import 'package:crm_app/Utils/app_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import '../Database/database_provider.dart';
 import '../Models/product_model.dart';
 import '../Views/products_list_page.dart';
@@ -32,71 +34,74 @@ class ProductTile extends StatefulWidget {
 class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text("${widget.product.productName}, ID: ${widget.product.id}"),
-      subtitle: Text(
-        "Preço de Compra: R\$${widget.product.costPrice}, Preço de Revenda: R\$${widget.product.sellingPrice} Quantidade: ${widget.product.amount}",
-      ),
-      trailing: SizedBox(
-        width: widget.sizedBoxWidth,
-        height: widget.sizedBoxHeight,
-        child: Row(
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.edit),
-              color: Colors.orange,
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  AppRoutes.addProductForm,
-                  // Argument sent to the 'addProductForm' route
-                  arguments: {
-                    'sale': widget.product,
-                    'refresh': widget.refresh
-                  },
-                );
-              },
-            ),
-            // Delete
-            IconButton(
-              icon: const Icon(Icons.delete),
-              color: Colors.red,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Remove"),
-                    content: const Text("Tem Certeza"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text("Sim"),
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                      ),
-                      TextButton(
-                        child: const Text("Não"),
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                      ),
-                    ],
-                  ),
-                ).then((isConfirmed) async {
-                  if (isConfirmed) {
-                    DatabaseProvider.instance.delete(
-                      widget.product.id!,
-                      productTable,
-                    );
+    return Container(
+      decoration: BoxDecoration(border: Border.all()),
+      child: ListTile(
+        title: Text("${widget.product.productName}, ID: ${widget.product.id}"),
+        subtitle: Text(
+          "Preço de Compra: R\$${widget.product.costPrice}, Preço de Revenda: R\$${widget.product.sellingPrice} Quantidade: ${widget.product.amount}",
+        ),
+        trailing: SizedBox(
+          width: widget.sizedBoxWidth,
+          height: widget.sizedBoxHeight,
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.edit),
+                color: Colors.orange,
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    AppRoutes.addProductForm,
+                    // Argument sent to the 'addProductForm' route
+                    arguments: {
+                      'sale': widget.product,
+                      'refresh': widget.refresh
+                    },
+                  );
+                },
+              ),
+              // Delete
+              IconButton(
+                icon: const Icon(Icons.delete),
+                color: Colors.red,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Remove"),
+                      content: const Text("Tem Certeza"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text("Sim"),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Não"),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                      ],
+                    ),
+                  ).then((isConfirmed) async {
+                    if (isConfirmed) {
+                      DatabaseProvider.instance.delete(
+                        widget.product.id!,
+                        productTable,
+                      );
 
-                    await widget.refresh();
-                  }
-                });
-              },
-            ),
-            widget.listChildrenWidget != null
-                ? widget.listChildrenWidget!
-                : Container(),
-          ],
+                      await widget.refresh();
+                    }
+                  });
+                },
+              ),
+              widget.listChildrenWidget != null
+                  ? widget.listChildrenWidget!
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

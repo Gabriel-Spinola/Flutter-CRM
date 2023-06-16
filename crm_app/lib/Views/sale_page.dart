@@ -34,7 +34,7 @@ class _SalePageState extends State<SalePage> {
 
   final Map<String, double> _pricing = {};
   final List<ProductModel> _products = [];
-  final Map<String, double> _discounts = {};
+  Map<String, double> _discounts = {};
 
   List<UnitSaleModel> _unitSales = [];
   ProductModel? data;
